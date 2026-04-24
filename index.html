@@ -34,7 +34,8 @@
       min-height: 100vh;
       padding-bottom: 100px;
       background-color: #f8faff;
-      background-image: linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+      background-image: 
+        linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
         linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
       background-size: 24px 24px;
     }
@@ -372,60 +373,6 @@
       box-shadow: 0 2px 8px rgba(37,99,235,0.3);
     }
     .btn-play:active { transform: scale(0.98); }
-    
-    /* Audio player tersembunyi */
-    .hidden-audio {
-      position: fixed;
-      bottom: -100px;
-      left: -100px;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-    }
-    
-    /* Now playing bar */
-    .now-playing {
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--blue);
-      color: white;
-      padding: 8px 20px;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 99;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: all 0.3s;
-      white-space: nowrap;
-      max-width: 90%;
-    }
-    .now-playing.hide {
-      transform: translateX(-50%) translateY(60px);
-      opacity: 0;
-      pointer-events: none;
-    }
-    .now-playing i {
-      animation: pulse 1s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .now-playing .stop-btn {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      border-radius: 20px;
-      padding: 2px 10px;
-      cursor: pointer;
-      font-size: 0.7rem;
-      margin-left: 8px;
-    }
 
     .reaction-row { display: flex; gap: 7px; margin-top: 10px; flex-wrap: wrap; }
     .reaction {
@@ -525,6 +472,67 @@
       opacity: 1;
     }
 
+    /* Mini player yang keliatan (biar auto-play work) */
+    .mini-player {
+      position: fixed;
+      bottom: 80px;
+      right: 10px;
+      width: 200px;
+      background: #1a1a2e;
+      border-radius: 12px;
+      overflow: hidden;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .mini-player.minimized {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: var(--blue);
+    }
+    .mini-player.minimized .mini-player-content {
+      display: none;
+    }
+    .mini-player.minimized .mini-toggle {
+      justify-content: center;
+    }
+    .mini-player-content {
+      padding: 8px;
+    }
+    .mini-player iframe {
+      width: 100%;
+      height: 113px;
+      border: none;
+    }
+    .mini-info {
+      font-size: 0.65rem;
+      color: white;
+      padding: 6px 8px;
+      background: rgba(0,0,0,0.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mini-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 8px;
+      background: var(--blue);
+      cursor: pointer;
+      color: white;
+      font-size: 0.7rem;
+    }
+    .close-mini {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
     @media (max-width: 480px) {
       .glass-card { padding: 1.2rem 1rem; }
       .nav-item span { display: none; }
@@ -538,7 +546,9 @@
         justify-content: center;
         margin-top: 6px;
       }
-      .now-playing { font-size: 0.7rem; padding: 6px 16px; bottom: 70px; }
+      .mini-player {
+        width: 180px;
+      }
     }
   </style>
 </head>
@@ -658,14 +668,16 @@
 
 <div id="globalToast" class="toast-message"><i class="fas fa-check-circle" style="color:var(--blue)"></i><span id="toastText"></span></div>
 
-<!-- Hidden Audio Player -->
-<iframe id="hiddenAudioPlayer" class="hidden-audio" allow="autoplay"></iframe>
-
-<!-- Now Playing Bar -->
-<div id="nowPlayingBar" class="now-playing hide">
-  <i class="fas fa-music"></i>
-  <span id="nowPlayingText">Memutar...</span>
-  <button id="stopMusicBtn" class="stop-btn"><i class="fas fa-stop"></i> Stop</button>
+<!-- Mini Player (keliatan dikit biar auto-play work) -->
+<div id="miniPlayer" class="mini-player minimized">
+  <div class="mini-toggle" id="miniToggle">
+    <span><i class="fas fa-music"></i> <span id="miniStatus">Player</span></span>
+    <button class="close-mini" id="closeMini"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="mini-player-content">
+    <iframe id="miniIframe" allow="autoplay"></iframe>
+    <div class="mini-info" id="miniInfo">Belum ada lagu diputar</div>
+  </div>
 </div>
 
 <script>
@@ -679,7 +691,6 @@ let posts = JSON.parse(localStorage.getItem('pnc_menfess_v2') || '[]');
 let currentMoodMenf = '';
 let menfAnonState = true;
 let songAnonState = true;
-let currentAudioPlayer = null;
 
 function saveData() { localStorage.setItem('pnc_menfess_v2', JSON.stringify(posts)); }
 function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
@@ -733,35 +744,38 @@ function showToast(msg, icon = 'fas fa-check-circle') {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
 }
 
-// Now playing bar
-function showNowPlaying(title, artist) {
-  const bar = document.getElementById('nowPlayingBar');
-  const text = document.getElementById('nowPlayingText');
-  text.innerHTML = `<i class="fas fa-play"></i> ${title} ${artist ? `- ${artist}` : ''}`;
-  bar.classList.remove('hide');
+// Mini Player functions
+function showMiniPlayer() {
+  const player = document.getElementById('miniPlayer');
+  player.classList.remove('minimized');
 }
 
-function hideNowPlaying() {
-  const bar = document.getElementById('nowPlayingBar');
-  bar.classList.add('hide');
+function hideMiniPlayer() {
+  const player = document.getElementById('miniPlayer');
+  const iframe = document.getElementById('miniIframe');
+  iframe.src = 'about:blank';
+  player.classList.add('minimized');
+  document.getElementById('miniInfo').innerHTML = 'Player ditutup';
 }
 
-// Stop music
-document.getElementById('stopMusicBtn').addEventListener('click', () => {
-  const iframe = document.getElementById('hiddenAudioPlayer');
-  if (iframe) {
-    iframe.src = 'about:blank';
-  }
-  hideNowPlaying();
-  showToast('Musik dihentikan', 'fas fa-stop');
+document.getElementById('miniToggle').addEventListener('click', (e) => {
+  if (e.target.classList.contains('close-mini')) return;
+  const player = document.getElementById('miniPlayer');
+  player.classList.toggle('minimized');
+});
+document.getElementById('closeMini').addEventListener('click', () => {
+  hideMiniPlayer();
 });
 
-// Play video di hidden iframe
-function playVideoHidden(videoId, title, artist) {
-  const iframe = document.getElementById('hiddenAudioPlayer');
-  // YouTube embed with autoplay & no related videos
+// Play video di mini player (PASTI BUNYI karena videonya keliatan)
+function playVideoInPlayer(videoId, title, artist) {
+  const iframe = document.getElementById('miniIframe');
+  const info = document.getElementById('miniInfo');
+  const player = document.getElementById('miniPlayer');
+  
   iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
-  showNowPlaying(title, artist);
+  info.innerHTML = `<i class="fas fa-play"></i> ${title} ${artist ? `- ${artist}` : ''}`;
+  player.classList.remove('minimized');
   showToast(`Memutar: ${title}`, 'fas fa-play');
 }
 
@@ -778,7 +792,7 @@ async function searchAndPlay(title, artist) {
     if (!data.items || data.items.length === 0) throw new Error('Video tidak ditemukan');
     
     const videoId = data.items[0].id.videoId;
-    playVideoHidden(videoId, title, artist);
+    playVideoInPlayer(videoId, title, artist);
   } catch (error) {
     showToast(`Gagal: ${error.message}`, 'fas fa-exclamation-triangle');
   }

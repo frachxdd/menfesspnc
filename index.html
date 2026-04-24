@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
-  <title>Menfess PNC • Politeknik Negeri Cilacap</title>
+  <title>Menfess PNC • With Comments</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
@@ -394,6 +394,88 @@
       font-weight: 600;
     }
 
+    /* Komentar section */
+    .comments-section {
+      margin-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+    .comment-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      border-radius: 20px;
+      transition: all 0.15s;
+    }
+    .comment-btn:hover {
+      background: var(--surface);
+      color: var(--blue);
+    }
+    .comment-list {
+      margin-top: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .comment-item {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+    }
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+    .comment-name {
+      font-weight: 600;
+      color: var(--blue);
+    }
+    .comment-text {
+      font-size: 0.8rem;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .comment-input-area {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .comment-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .comment-input:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+    .comment-submit {
+      background: var(--blue);
+      border: none;
+      color: white;
+      padding: 0 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+    .comment-submit:hover {
+      background: var(--blue-soft);
+    }
+
     .empty-feed {
       text-align: center;
       padding: 3rem 1rem;
@@ -582,7 +664,6 @@
       animation: musicPulse 1s infinite;
     }
     
-    /* ========== HAPUS EFEK BIRU SAAT DI KLIK ========== */
     button:focus, 
     button:active,
     .btn-play:focus,
@@ -599,13 +680,14 @@
     .toggle-anon:active,
     .mood-chip:focus,
     .mood-chip:active,
-    [type="button"]:focus,
-    [type="button"]:active {
+    .comment-btn:focus,
+    .comment-btn:active,
+    .comment-submit:focus,
+    .comment-submit:active {
       outline: none !important;
       -webkit-tap-highlight-color: transparent !important;
       box-shadow: none !important;
     }
-    /* ================================================= */
     
     @media (max-width: 480px) {
       .glass-card { padding: 1.2rem 1rem; }
@@ -774,12 +856,14 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const YOUTUBE_API_KEY = "AIzaSyCTW69xlCOgtjonm_WdtWjMfoyGg29mI10";
 
 let posts = [];
+let comments = {};
 let currentMoodMenf = '';
 let menfAnonState = true;
 let songAnonState = true;
 let isDragging = false;
 let dragStartX = 0, dragStartY = 0;
 let isOpen = false;
+let openCommentPostId = null;
 
 // ==================== SUPABASE FUNCTIONS ====================
 
@@ -796,12 +880,95 @@ async function loadPosts() {
         
         const data = await response.json();
         posts = data;
+        await loadAllComments();
         renderFeed();
         updateFeedCount();
         console.log("Data loaded:", posts.length);
     } catch (error) {
         console.error("Error loading posts:", error);
         showToast("Gagal load data dari server", "fas fa-exclamation-circle");
+    }
+}
+
+async function loadCommentsForPost(postId) {
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/comments?post_id=eq.${postId}&order=created_at.asc`, {
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            }
+        });
+        
+        if (!response.ok) throw new Error("Gagal load comments");
+        
+        const data = await response.json();
+        comments[postId] = data;
+        return data;
+    } catch (error) {
+        console.error("Error loading comments:", error);
+        return [];
+    }
+}
+
+async function loadAllComments() {
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.asc`, {
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            }
+        });
+        
+        if (!response.ok) throw new Error("Gagal load all comments");
+        
+        const data = await response.json();
+        comments = {};
+        data.forEach(comment => {
+            if (!comments[comment.post_id]) comments[comment.post_id] = [];
+            comments[comment.post_id].push(comment);
+        });
+    } catch (error) {
+        console.error("Error loading all comments:", error);
+    }
+}
+
+async function saveComment(postId, commentText, fromUser) {
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            },
+            body: JSON.stringify({
+                post_id: postId,
+                comment: commentText,
+                from_user: fromUser
+            })
+        });
+        
+        if (!response.ok) throw new Error("Gagal simpan komentar");
+        
+        // Update comment count di posts
+        const currentCount = posts.find(p => p.id === postId)?.comment_count || 0;
+        await fetch(`${SUPABASE_URL}/rest/v1/posts?id=eq.${postId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            },
+            body: JSON.stringify({ comment_count: currentCount + 1 })
+        });
+        
+        showToast("Komentar terkirim!", "fas fa-check-circle");
+        await loadPosts();
+        return true;
+    } catch (error) {
+        console.error("Error saving comment:", error);
+        showToast("Gagal kirim komentar", "fas fa-exclamation-circle");
+        return false;
     }
 }
 
@@ -814,7 +981,7 @@ async function savePost(post) {
                 "apikey": SUPABASE_ANON_KEY,
                 "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
             },
-            body: JSON.stringify(post)
+            body: JSON.stringify({ ...post, comment_count: 0 })
         });
         
         if (!response.ok) throw new Error("Gagal simpan ke database");
@@ -1067,6 +1234,66 @@ function updateFeedCount() {
     document.getElementById('feedCountBadge').textContent = posts.length + ' postingan';
 }
 
+function renderCommentSection(postId, commentCount) {
+    const postComments = comments[postId] || [];
+    const isOpen = openCommentPostId === postId;
+    
+    let commentsHtml = '';
+    if (isOpen) {
+        commentsHtml = `
+            <div class="comment-list">
+                ${postComments.map(c => `
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-name">${escapeHtml(c.from_user)}</span>
+                            <span>${formatTime(c.created_at)}</span>
+                        </div>
+                        <div class="comment-text">${escapeHtml(c.comment)}</div>
+                    </div>
+                `).join('')}
+                ${postComments.length === 0 ? '<div style="text-align:center; padding:12px; color:var(--muted); font-size:0.7rem;">Belum ada komentar. Jadi yang pertama!</div>' : ''}
+            </div>
+            <div class="comment-input-area">
+                <input type="text" class="comment-input" id="commentInput_${postId}" placeholder="Tulis komentar anonim...">
+                <button class="comment-submit" onclick="submitComment(${postId})">Kirim</button>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="comments-section">
+            <button class="comment-btn" onclick="toggleComments(${postId})">
+                <i class="fas fa-comment"></i> Komentar (${commentCount || 0})
+            </button>
+            ${commentsHtml}
+        </div>
+    `;
+}
+
+function toggleComments(postId) {
+    if (openCommentPostId === postId) {
+        openCommentPostId = null;
+    } else {
+        openCommentPostId = postId;
+    }
+    renderFeed();
+}
+
+async function submitComment(postId) {
+    const input = document.getElementById(`commentInput_${postId}`);
+    const commentText = input.value.trim();
+    
+    if (!commentText) {
+        showToast("Tulis komentar dulu!", "fas fa-exclamation-circle");
+        return;
+    }
+    
+    await saveComment(postId, commentText, "Anonim");
+    input.value = '';
+    openCommentPostId = postId;
+    await loadPosts();
+}
+
 function renderFeed() {
     const list = document.getElementById('feedList');
     updateFeedCount();
@@ -1079,6 +1306,7 @@ function renderFeed() {
     list.innerHTML = posts.map((post, idx) => {
         const reacts = post.reactions || { '❤️': 0, '💬': 0, '🎧': 0 };
         const timeDisplay = formatTime(post.created_at);
+        const commentCount = post.comment_count || 0;
         
         if (post.type === 'menfes') {
             return `<div class="post-card" data-id="${post.id}">
@@ -1094,6 +1322,7 @@ function renderFeed() {
                     <button class="reaction" data-emoji="💬">💬 ${reacts['💬'] || 0}</button>
                     <button class="reaction" data-emoji="🎧">🎧 ${reacts['🎧'] || 0}</button>
                 </div>
+                ${renderCommentSection(post.id, commentCount)}
             </div>`;
         } else {
             return `<div class="post-card" data-id="${post.id}">
@@ -1120,6 +1349,7 @@ function renderFeed() {
                     <button class="reaction" data-emoji="💬">💬 ${reacts['💬'] || 0}</button>
                     <button class="reaction" data-emoji="🎧">🎧 ${reacts['🎧'] || 0}</button>
                 </div>
+                ${renderCommentSection(post.id, commentCount)}
             </div>`;
         }
     }).join('');
@@ -1151,6 +1381,10 @@ function renderFeed() {
         });
     });
 }
+
+// Make functions global for onclick
+window.toggleComments = toggleComments;
+window.submitComment = submitComment;
 
 // Start the app
 loadPosts();

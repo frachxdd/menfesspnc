@@ -582,6 +582,31 @@
       animation: musicPulse 1s infinite;
     }
     
+    /* ========== HAPUS EFEK BIRU SAAT DI KLIK ========== */
+    button:focus, 
+    button:active,
+    .btn-play:focus,
+    .btn-play:active,
+    .reaction:focus,
+    .reaction:active,
+    .nav-item:focus,
+    .nav-item:active,
+    .btn-submit:focus,
+    .btn-submit:active,
+    .music-icon:focus,
+    .music-icon:active,
+    .toggle-anon:focus,
+    .toggle-anon:active,
+    .mood-chip:focus,
+    .mood-chip:active,
+    [type="button"]:focus,
+    [type="button"]:active {
+      outline: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+      box-shadow: none !important;
+    }
+    /* ================================================= */
+    
     @media (max-width: 480px) {
       .glass-card { padding: 1.2rem 1rem; }
       .nav-item span { display: none; }
@@ -740,7 +765,7 @@
 
 <script>
 // ============================================================
-// 🔑 SUPABASE CONFIG - UDAH DI SET PAKE PUNYA LO!
+// 🔑 SUPABASE CONFIG
 // ============================================================
 const SUPABASE_URL = "https://vtwcjyyjzvyznezzbydq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0d2NqeXlqenZ5em5lenpieWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5OTk2NDIsImV4cCI6MjA5MjU3NTY0Mn0.Q_XXJJWldMCw4EScC7u-DLY0oW7uwt8NqRJxfYUJxUk";
@@ -795,7 +820,7 @@ async function savePost(post) {
         if (!response.ok) throw new Error("Gagal simpan ke database");
         
         showToast("Berhasil disimpan!", "fas fa-check-circle");
-        await loadPosts(); // Refresh feed
+        await loadPosts();
         return true;
     } catch (error) {
         console.error("Error saving post:", error);
@@ -1113,7 +1138,7 @@ function renderFeed() {
                 newReactions[emoji] = (newReactions[emoji] || 0) + 1;
                 post.reactions = newReactions;
                 await updateReactions(id, newReactions);
-                await loadPosts(); // Refresh
+                await loadPosts();
             }
         });
     });

@@ -740,25 +740,33 @@
 
 <script>
 // ============================================================
-// 🔑 API KEY
+// 🔑 API KEY 
 // ============================================================
 const YOUTUBE_API_KEY = "AIzaSyCTW69xlCOgtjonm_WdtWjMfoyGg29mI10";
 // ============================================================
 
+// INI YG PENTING - DATA TETAP ADA MESKI REFRESH!
 let posts = JSON.parse(localStorage.getItem('pnc_menfess_v2') || '[]');
-let currentMoodMenf = '';
-let menfAnonState = true;
-let songAnonState = true;
 
-// Hapus semua data dummy - biar kosong
-if (posts.length > 0) {
-  // Filter hanya yang bukan dummy (tapi karena kita hapus semua, langsung kosongin aja)
+// HANYA TAMBAHKAN DATA AWAL JIKA BELUM ADA SATUPUN POSTINGAN
+if (posts.length === 0) {
+  // Feed mulai kosong - TIDAK ADA DUMMY
   posts = [];
   saveData();
 }
 
-function saveData() { localStorage.setItem('pnc_menfess_v2', JSON.stringify(posts)); }
-function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
+let currentMoodMenf = '';
+let menfAnonState = true;
+let songAnonState = true;
+
+function saveData() { 
+  localStorage.setItem('pnc_menfess_v2', JSON.stringify(posts)); 
+}
+
+function escapeHtml(str) { 
+  if (!str) return ''; 
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); 
+}
 
 function navigateTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
@@ -815,7 +823,6 @@ const musicIcon = document.getElementById('musicIcon');
 const musicPlayerCard = document.getElementById('musicPlayerCard');
 let isDragging = false;
 let dragStartX = 0, dragStartY = 0;
-let floatStartLeft = 0, floatStartTop = 0;
 let isOpen = false;
 
 function openPlayer() {
@@ -833,7 +840,6 @@ function closePlayer() {
 musicIcon.addEventListener('click', openPlayer);
 document.getElementById('closePlayerBtn').addEventListener('click', closePlayer);
 
-// Draggable untuk floating container
 musicFloat.addEventListener('mousedown', (e) => {
   if (e.target.closest('.player-controls')) return;
   if (e.target.closest('#closePlayerBtn')) return;
@@ -904,10 +910,18 @@ document.getElementById('submitMenfess').addEventListener('click', () => {
   const from = menfAnonState ? 'Anonim' : (document.getElementById('menfName').value.trim() || 'Anonim');
   const to = document.getElementById('menfTo').value.trim();
   const mood = currentMoodMenf || '';
-  posts.unshift({ id: Date.now(), type: 'menfes', msg, from, to, mood, time: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }), reactions: { '❤️': 0, '💬': 0, '🎧': 0 }, reacted: {} });
+  posts.unshift({ 
+    id: Date.now(), type: 'menfes', msg, from, to, mood, 
+    time: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }), 
+    reactions: { '❤️': 0, '💬': 0, '🎧': 0 }, reacted: {} 
+  });
   saveData();
-  document.getElementById('menfMsg').value = ''; document.getElementById('menfTo').value = ''; document.getElementById('menfChar').textContent = '0/500'; document.getElementById('menfName').value = '';
-  document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(c => c.classList.remove('selected')); currentMoodMenf = '';
+  document.getElementById('menfMsg').value = ''; 
+  document.getElementById('menfTo').value = ''; 
+  document.getElementById('menfChar').textContent = '0/500'; 
+  document.getElementById('menfName').value = '';
+  document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(c => c.classList.remove('selected')); 
+  currentMoodMenf = '';
   showToast('Menfess berhasil dikirim! 💜');
   if (document.getElementById('feedPage').classList.contains('active-page')) renderFeed();
 });
@@ -919,9 +933,18 @@ document.getElementById('submitSongfes').addEventListener('click', () => {
   const artist = document.getElementById('songArtist').value.trim();
   const msg = document.getElementById('songMsgReq').value.trim();
   const to = document.getElementById('songTo').value.trim();
-  posts.unshift({ id: Date.now(), type: 'songfes', title, artist, msg, from, to, time: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }), reactions: { '❤️': 0, '💬': 0, '🎧': 0 }, reacted: {} });
+  posts.unshift({ 
+    id: Date.now(), type: 'songfes', title, artist, msg, from, to, 
+    time: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }), 
+    reactions: { '❤️': 0, '💬': 0, '🎧': 0 }, reacted: {} 
+  });
   saveData();
-  document.getElementById('songTitle').value = ''; document.getElementById('songArtist').value = ''; document.getElementById('songMsgReq').value = ''; document.getElementById('songTo').value = ''; document.getElementById('songMsgChar').textContent = '0/280'; document.getElementById('songName').value = '';
+  document.getElementById('songTitle').value = ''; 
+  document.getElementById('songArtist').value = ''; 
+  document.getElementById('songMsgReq').value = ''; 
+  document.getElementById('songTo').value = ''; 
+  document.getElementById('songMsgChar').textContent = '0/280'; 
+  document.getElementById('songName').value = '';
   showToast('Request lagu dikirim! 🎶');
   if (document.getElementById('feedPage').classList.contains('active-page')) renderFeed();
 });
@@ -929,7 +952,10 @@ document.getElementById('submitSongfes').addEventListener('click', () => {
 function renderFeed() {
   const list = document.getElementById('feedList');
   document.getElementById('feedCountBadge').textContent = posts.length + ' postingan';
-  if (!posts.length) { list.innerHTML = '<div class="empty-feed"><i class="fas fa-inbox"></i><p>Belum ada suara.<br>Yuk kirim menfess atau request lagu pertama!</p></div>'; return; }
+  if (!posts.length) { 
+    list.innerHTML = '<div class="empty-feed"><i class="fas fa-inbox"></i><p>Belum ada suara.<br>Yuk kirim menfess atau request lagu pertama!</p></div>'; 
+    return; 
+  }
   list.innerHTML = posts.map((post, idx) => {
     const reacts = post.reactions || { '❤️': 0, '💬': 0, '🎧': 0 };
     const reacted = post.reacted || {};
@@ -940,8 +966,28 @@ function renderFeed() {
       return `<div class="post-card"><div class="badge-type badge-song"><i class="fas fa-music"></i> Songfes PNC</div><div class="post-meta"><span class="sender"><i class="fas fa-user-secret"></i> ${escapeHtml(post.from)}${post.to ? ` → <strong>${escapeHtml(post.to)}</strong>` : ''}</span><span class="post-time">${post.time || ''}</span></div><div class="song-preview"><div class="song-info"><div class="song-icon-wrap"><i class="fas fa-music"></i></div><div><div class="song-title-text">${escapeHtml(post.title)}</div>${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}</div></div><button class="btn-play" data-title="${escapeHtml(post.title)}" data-artist="${escapeHtml(post.artist || '')}"><i class="fas fa-play"></i> Putar</button></div>${post.msg ? `<div class="message-text" style="font-size:0.83rem; color:var(--muted);">"${escapeHtml(post.msg)}"</div>` : ''}<div class="reaction-row">${reactionHtml}</div></div>`;
     }
   }).join('');
-  list.querySelectorAll('.reaction').forEach(btn => btn.addEventListener('click', () => { const idx = parseInt(btn.dataset.idx); const emoji = btn.dataset.emoji; const p = posts[idx]; if (!p.reactions) p.reactions = { '❤️': 0, '💬': 0, '🎧': 0 }; if (!p.reacted) p.reacted = {}; if (p.reacted[emoji]) { p.reactions[emoji] = Math.max(0, p.reactions[emoji] - 1); delete p.reacted[emoji]; } else { p.reactions[emoji] = (p.reactions[emoji] || 0) + 1; p.reacted[emoji] = true; } saveData(); renderFeed(); }));
-  list.querySelectorAll('.btn-play').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); searchAndPlay(btn.dataset.title, btn.dataset.artist); }));
+  
+  list.querySelectorAll('.reaction').forEach(btn => btn.addEventListener('click', () => { 
+    const idx = parseInt(btn.dataset.idx); 
+    const emoji = btn.dataset.emoji; 
+    const p = posts[idx]; 
+    if (!p.reactions) p.reactions = { '❤️': 0, '💬': 0, '🎧': 0 }; 
+    if (!p.reacted) p.reacted = {}; 
+    if (p.reacted[emoji]) { 
+      p.reactions[emoji] = Math.max(0, p.reactions[emoji] - 1); 
+      delete p.reacted[emoji]; 
+    } else { 
+      p.reactions[emoji] = (p.reactions[emoji] || 0) + 1; 
+      p.reacted[emoji] = true; 
+    } 
+    saveData(); 
+    renderFeed(); 
+  }));
+  
+  list.querySelectorAll('.btn-play').forEach(btn => btn.addEventListener('click', (e) => { 
+    e.stopPropagation(); 
+    searchAndPlay(btn.dataset.title, btn.dataset.artist); 
+  }));
 }
 
 navigateTo('menfess');

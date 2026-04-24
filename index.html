@@ -34,8 +34,7 @@
       min-height: 100vh;
       padding-bottom: 100px;
       background-color: #f8faff;
-      background-image: 
-        linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+      background-image: linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
         linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
       background-size: 24px 24px;
     }
@@ -373,6 +372,60 @@
       box-shadow: 0 2px 8px rgba(37,99,235,0.3);
     }
     .btn-play:active { transform: scale(0.98); }
+    
+    /* Audio player tersembunyi */
+    .hidden-audio {
+      position: fixed;
+      bottom: -100px;
+      left: -100px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    /* Now playing bar */
+    .now-playing {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--blue);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 99;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      white-space: nowrap;
+      max-width: 90%;
+    }
+    .now-playing.hide {
+      transform: translateX(-50%) translateY(60px);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .now-playing i {
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .now-playing .stop-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      border-radius: 20px;
+      padding: 2px 10px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      margin-left: 8px;
+    }
 
     .reaction-row { display: flex; gap: 7px; margin-top: 10px; flex-wrap: wrap; }
     .reaction {
@@ -472,84 +525,6 @@
       opacity: 1;
     }
 
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-      backdrop-filter: blur(8px);
-    }
-    .modal.active { display: flex; }
-    .modal-content {
-      background: #0a0a0a;
-      border-radius: 24px;
-      width: 90%;
-      max-width: 550px;
-      overflow: hidden;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-      animation: modalSlideIn 0.3s ease;
-    }
-    @keyframes modalSlideIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .modal-header {
-      padding: 14px 18px;
-      background: #1a1a2e;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: white;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .modal-header h4 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .close-modal {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.6rem;
-      cursor: pointer;
-      padding: 0 8px;
-      transition: opacity 0.2s;
-      line-height: 1;
-    }
-    .close-modal:hover { opacity: 0.7; }
-    .player-wrapper {
-      position: relative;
-      width: 100%;
-      background: #000;
-    }
-    .player-wrapper iframe {
-      width: 100%;
-      height: 350px;
-      display: block;
-      border: none;
-    }
-    .modal-loading {
-      text-align: center;
-      padding: 80px 20px;
-      color: white;
-      background: #0a0a0a;
-    }
-    .modal-loading i {
-      font-size: 2.5rem;
-      margin-bottom: 16px;
-      display: block;
-    }
-    .error-message { color: #ff6b6b; font-size: 0.85rem; margin-top: 12px; }
-
     @media (max-width: 480px) {
       .glass-card { padding: 1.2rem 1rem; }
       .nav-item span { display: none; }
@@ -563,7 +538,7 @@
         justify-content: center;
         margin-top: 6px;
       }
-      .player-wrapper iframe { height: 280px; }
+      .now-playing { font-size: 0.7rem; padding: 6px 16px; bottom: 70px; }
     }
   </style>
 </head>
@@ -682,11 +657,20 @@
 </nav>
 
 <div id="globalToast" class="toast-message"><i class="fas fa-check-circle" style="color:var(--blue)"></i><span id="toastText"></span></div>
-<div id="musicModal" class="modal"><div class="modal-content"><div class="modal-header"><h4><i class="fas fa-music"></i> YouTube Music Player</h4><button class="close-modal">&times;</button></div><div id="playerContainer"><div class="modal-loading"><i class="fas fa-circle-notch fa-spin"></i><p>Memuat pemutar musik...</p></div></div></div></div>
+
+<!-- Hidden Audio Player -->
+<iframe id="hiddenAudioPlayer" class="hidden-audio" allow="autoplay"></iframe>
+
+<!-- Now Playing Bar -->
+<div id="nowPlayingBar" class="now-playing hide">
+  <i class="fas fa-music"></i>
+  <span id="nowPlayingText">Memutar...</span>
+  <button id="stopMusicBtn" class="stop-btn"><i class="fas fa-stop"></i> Stop</button>
+</div>
 
 <script>
 // ============================================================
-// 🔑 API KEY SUDAH DI PASANG!
+// 🔑 API KEY
 // ============================================================
 const YOUTUBE_API_KEY = "AIzaSyCTW69xlCOgtjonm_WdtWjMfoyGg29mI10";
 // ============================================================
@@ -695,6 +679,7 @@ let posts = JSON.parse(localStorage.getItem('pnc_menfess_v2') || '[]');
 let currentMoodMenf = '';
 let menfAnonState = true;
 let songAnonState = true;
+let currentAudioPlayer = null;
 
 function saveData() { localStorage.setItem('pnc_menfess_v2', JSON.stringify(posts)); }
 function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
@@ -748,18 +733,40 @@ function showToast(msg, icon = 'fas fa-check-circle') {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
 }
 
-function playVideo(videoId, title) {
-  const modal = document.getElementById('musicModal');
-  const playerContainer = document.getElementById('playerContainer');
-  modal.classList.add('active');
-  playerContainer.innerHTML = `<div class="player-wrapper"><iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+// Now playing bar
+function showNowPlaying(title, artist) {
+  const bar = document.getElementById('nowPlayingBar');
+  const text = document.getElementById('nowPlayingText');
+  text.innerHTML = `<i class="fas fa-play"></i> ${title} ${artist ? `- ${artist}` : ''}`;
+  bar.classList.remove('hide');
+}
+
+function hideNowPlaying() {
+  const bar = document.getElementById('nowPlayingBar');
+  bar.classList.add('hide');
+}
+
+// Stop music
+document.getElementById('stopMusicBtn').addEventListener('click', () => {
+  const iframe = document.getElementById('hiddenAudioPlayer');
+  if (iframe) {
+    iframe.src = 'about:blank';
+  }
+  hideNowPlaying();
+  showToast('Musik dihentikan', 'fas fa-stop');
+});
+
+// Play video di hidden iframe
+function playVideoHidden(videoId, title, artist) {
+  const iframe = document.getElementById('hiddenAudioPlayer');
+  // YouTube embed with autoplay & no related videos
+  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+  showNowPlaying(title, artist);
+  showToast(`Memutar: ${title}`, 'fas fa-play');
 }
 
 async function searchAndPlay(title, artist) {
-  const modal = document.getElementById('musicModal');
-  const playerContainer = document.getElementById('playerContainer');
-  modal.classList.add('active');
-  playerContainer.innerHTML = `<div class="modal-loading"><i class="fas fa-circle-notch fa-spin"></i><p>Mencari "${escapeHtml(title)}"...</p></div>`;
+  showToast(`Mencari "${title}"...`, 'fas fa-circle-notch fa-spin');
   
   let searchQuery = `${title} ${artist || ''} official audio`;
   try {
@@ -771,18 +778,11 @@ async function searchAndPlay(title, artist) {
     if (!data.items || data.items.length === 0) throw new Error('Video tidak ditemukan');
     
     const videoId = data.items[0].id.videoId;
-    playVideo(videoId, title);
+    playVideoHidden(videoId, title, artist);
   } catch (error) {
-    playerContainer.innerHTML = `<div class="modal-loading"><i class="fas fa-exclamation-triangle" style="color:#ff9800"></i><p>Gagal memutar: ${error.message}</p><p style="font-size:0.8rem;margin-top:8px;">Coba lagi nanti</p><button id="closeModalBtn" style="margin-top:16px;background:#2563eb;border:none;padding:8px 20px;border-radius:40px;color:white;cursor:pointer;">Tutup</button></div>`;
-    document.getElementById('closeModalBtn')?.addEventListener('click', () => modal.classList.remove('active'));
+    showToast(`Gagal: ${error.message}`, 'fas fa-exclamation-triangle');
   }
 }
-
-document.querySelector('.close-modal').addEventListener('click', () => {
-  document.getElementById('musicModal').classList.remove('active');
-  document.getElementById('playerContainer').innerHTML = '<div class="modal-loading"><i class="fas fa-circle-notch fa-spin"></i><p>Memuat pemutar musik...</p></div>';
-});
-document.getElementById('musicModal').addEventListener('click', (e) => { if (e.target === document.getElementById('musicModal')) document.querySelector('.close-modal').click(); });
 
 document.getElementById('submitMenfess').addEventListener('click', () => {
   const msg = document.getElementById('menfMsg').value.trim();

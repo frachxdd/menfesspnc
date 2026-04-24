@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
+  <title>Menfess PNC • Politeknik Negeri Cilacap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-card: #ffffff;
+      --surface: #eef0f7;
+      --border: #dde1ef;
+      --blue: #2563eb;
+      --blue-soft: #3b82f6;
+      --blue-light: #eff6ff;
+      --blue-mid: #dbeafe;
+      --cyan: #0891b2;
+      --text: #1e1e2e;
+      --muted: #64748b;
+      --nav-bg: rgba(255,255,255,0.92);
+      --shadow: 0 2px 16px rgba(37,99,235,0.08);
+      --shadow-md: 0 4px 24px rgba(37,99,235,0.13);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+      background-color: #f8faff;
+      background-image: 
+        linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 2.2rem 1.5rem 1rem;
+      background: rgba(239, 246, 255, 0.7);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pnc-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue-mid);
+      border: 1px solid #bfdbfe;
+      padding: 5px 16px;
+      border-radius: 60px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--blue);
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(2rem, 7vw, 3.4rem);
+      font-weight: 800;
+      color: var(--blue);
+      line-height: 1.1;
+      text-shadow: 0 0 15px rgba(37, 99, 235, 0.45), 0 0 30px rgba(37, 99, 235, 0.2);
+    }
+
+    .tagline {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 1.4rem 1.2rem 80px;
+    }
+
+    .page { display: none; }
+    .page.active-page {
+      display: block;
+      animation: fadeUp 0.28s ease-out;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.8rem;
+      margin-bottom: 1.6rem;
+      box-shadow: var(--shadow);
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .form-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .input-field { margin-bottom: 1.2rem; }
+
+    label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 11px 15px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      resize: vertical;
+    }
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+      background: #fff;
+    }
+    textarea { min-height: 90px; }
+
+    .char-counter {
+      text-align: right;
+      font-size: 0.65rem;
+      color: #94a3b8;
+      margin-top: 5px;
+    }
+
+    .mood-grid { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 5px; }
+    .mood-chip {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .mood-chip:hover { border-color: var(--blue-soft); color: var(--blue); }
+    .mood-chip.selected {
+      background: var(--blue-mid);
+      border-color: var(--blue);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .toggle-anon {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface);
+      padding: 11px 16px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      margin-bottom: 12px;
+      user-select: none;
+      transition: border-color 0.2s;
+    }
+    .toggle-anon:hover { border-color: var(--blue-soft); }
+
+    .toggle-switch {
+      width: 44px; height: 24px;
+      background: #cbd5e1;
+      border-radius: 99px;
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .toggle-switch::before {
+      content: '';
+      width: 18px; height: 18px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px; left: 3px;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-anon.on .toggle-switch { background: var(--blue); }
+    .toggle-anon.on .toggle-switch::before { transform: translateX(20px); }
+    .toggle-label { font-size: 0.85rem; color: var(--text); font-weight: 500; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      border-radius: 40px;
+      border: none;
+      background: linear-gradient(135deg, var(--blue) 0%, #1d4ed8 100%);
+      color: white;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+    }
+    .btn-submit:hover { box-shadow: 0 6px 24px rgba(37,99,235,0.4); transform: translateY(-1px); }
+    .btn-submit:active { transform: scale(0.97); }
+
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+    .feed-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .count-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: var(--blue-mid);
+      color: var(--blue);
+      padding: 4px 12px;
+      border-radius: 99px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .post-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .post-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+    .badge-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      background: var(--blue-light);
+      color: var(--blue);
+      border: 1px solid #bfdbfe;
+      padding: 3px 11px;
+      border-radius: 99px;
+      letter-spacing: 0.3px;
+    }
+    .badge-song {
+      background: #ecfeff;
+      color: var(--cyan);
+      border-color: #a5f3fc;
+    }
+
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0 6px;
+    }
+    .sender { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+    .post-time { font-size: 0.65rem; color: #94a3b8; }
+
+    .message-text {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: var(--text);
+      margin: 8px 0;
+    }
+
+    .mood-tag {
+      display: inline-block;
+      background: var(--surface);
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      margin-top: 4px;
+    }
+
+    .song-preview {
+      background: var(--blue-light);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+    .song-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    .song-icon-wrap {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .song-title-text { font-weight: 700; font-size: 0.88rem; color: var(--text); }
+    .song-artist-text { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
+    
+    .btn-play {
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      border: none;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-play:hover {
+      transform: scale(1.02);
+      box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+    }
+    .btn-play:active { transform: scale(0.98); }
+
+    .reaction-row { display: flex; gap: 7px; margin-top: 10px; flex-wrap: wrap; }
+    .reaction {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 0.73rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .reaction:hover { border-color: var(--blue-soft); color: var(--blue); }
+    .reaction.reacted {
+      background: var(--blue-mid);
+      border-color: var(--blue);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .empty-feed {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+    .empty-feed i { font-size: 2.5rem; opacity: 0.4; margin-bottom: 12px; display: block; }
+    .empty-feed p { font-size: 0.85rem; line-height: 1.6; }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 36px);
+      max-width: 380px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid #e2e8f0;
+      border-radius: 99px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 7px 10px;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(37,99,235,0.12), 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background: transparent;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 99px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .nav-item i { font-size: 1.2rem; }
+    .nav-item.active {
+      background: var(--blue-mid);
+      color: var(--blue);
+      font-weight: 700;
+    }
+    .nav-item.active i { color: var(--blue); }
+
+    .toast-message {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: white;
+      border: 1px solid #bfdbfe;
+      box-shadow: 0 4px 24px rgba(37,99,235,0.15);
+      padding: 10px 22px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 999;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+      font-size: 0.82rem;
+      color: var(--text);
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast-message.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(8px);
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: #0a0a0a;
+      border-radius: 24px;
+      width: 90%;
+      max-width: 550px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      animation: modalSlideIn 0.3s ease;
+    }
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-header {
+      padding: 14px 18px;
+      background: #1a1a2e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .modal-header h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .close-modal {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.6rem;
+      cursor: pointer;
+      padding: 0 8px;
+      transition: opacity 0.2s;
+      line-height: 1;
+    }
+    .close-modal:hover { opacity: 0.7; }
+    .player-wrapper {
+      position: relative;
+      width: 100%;
+      background: #000;
+    }
+    .player-wrapper iframe {
+      width: 100%;
+      height: 350px;
+      display: block;
+      border: none;
+    }
+    .modal-loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: white;
+      background: #0a0a0a;
+    }
+    .modal-loading i {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .error-message { color: #ff6b6b; font-size: 0.85rem; margin-top: 12px; }
+
+    @media (max-width: 480px) {
+      .glass-card { padding: 1.2rem 1rem; }
+      .nav-item span { display: none; }
+      .nav-item { padding: 8px 0; min-width: 60px; }
+      .nav-item i { font-size: 1.35rem; }
+      .song-preview {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn-play {
+        justify-content: center;
+        margin-top: 6px;
+      }
+      .player-wrapper iframe { height: 280px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="pnc-badge">
+    <i class="fas fa-university"></i> POLITEKNIK NEGERI CILACAP
+  </div>
+  <h1>Menfess PNC</h1>
+  <p class="tagline">bisikkan rasa, dedikasikan nada • anonim sepenuhnya</p>
+</div>
+
+<div class="container">
+  <div id="menfessPage" class="page">
+    <div class="glass-card">
+      <div class="form-header">
+        <i class="fas fa-envelope-open-text" style="color:var(--blue)"></i>
+        <span>Kirim Menfess</span>
+      </div>
+      <p class="form-desc">Curhat, ucapan terima kasih, atau perasaanmu ke seseorang di PNC — anonim & aman.</p>
+
+      <div class="input-field">
+        <label>📌 Kepada (opsional)</label>
+        <input type="text" id="menfTo" placeholder="nama / inisial / kating..." maxlength="50" />
+      </div>
+      <div class="input-field">
+        <label>💬 Pesan *</label>
+        <textarea id="menfMsg" rows="3" maxlength="500" placeholder="tuliskan unek-unekmu di sini..."></textarea>
+        <div class="char-counter" id="menfChar">0/500</div>
+      </div>
+      <div class="input-field">
+        <label>🌱 Mood</label>
+        <div class="mood-grid" id="moodContainerMenf">
+          <span class="mood-chip" data-mood="😊 Bahagia">😊 Bahagia</span>
+          <span class="mood-chip" data-mood="😔 Galau">😔 Galau</span>
+          <span class="mood-chip" data-mood="🥰 Suka">🥰 Suka</span>
+          <span class="mood-chip" data-mood="😤 Kesal">😤 Kesal</span>
+          <span class="mood-chip" data-mood="🥺 Maaf">🥺 Maaf</span>
+          <span class="mood-chip" data-mood="💭 Rindu">💭 Rindu</span>
+          <span class="mood-chip" data-mood="🎉 Semangat">🎉 Semangat</span>
+        </div>
+      </div>
+
+      <div class="toggle-anon on" id="menfAnonToggle">
+        <div class="toggle-switch"></div>
+        <span class="toggle-label">Kirim secara anonim</span>
+      </div>
+      <div id="menfNameWrap" style="display:none" class="input-field">
+        <label>Nama kamu</label>
+        <input type="text" id="menfName" placeholder="nama panggilan / alias" maxlength="40" />
+      </div>
+
+      <button class="btn-submit" id="submitMenfess">
+        <i class="fas fa-paper-plane"></i> Bisikkan Sekarang
+      </button>
+    </div>
+  </div>
+
+  <div id="songfesPage" class="page">
+    <div class="glass-card">
+      <div class="form-header">
+        <i class="fas fa-headphones" style="color:var(--cyan)"></i>
+        <span>Request Lagu & Dedikasi</span>
+      </div>
+      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC. Klik play buat dengerin!</p>
+
+      <div class="input-field">
+        <label>🎵 Judul Lagu *</label>
+        <input type="text" id="songTitle" placeholder="contoh: Hati-Hati di Jalan" maxlength="80" />
+      </div>
+      <div class="input-field">
+        <label>🎤 Artis</label>
+        <input type="text" id="songArtist" placeholder="nama artis / band (opsional)" maxlength="60" />
+      </div>
+      <div class="input-field">
+        <label>📝 Pesan / alasan request</label>
+        <textarea id="songMsgReq" rows="2" maxlength="280" placeholder="ceritain kenapa lagu ini bermakna..."></textarea>
+        <div class="char-counter" id="songMsgChar">0/280</div>
+      </div>
+      <div class="input-field">
+        <label>🎯 Untuk siapa</label>
+        <input type="text" id="songTo" placeholder="nama / angkatan / umum" maxlength="50" />
+      </div>
+
+      <div class="toggle-anon on" id="songAnonToggle">
+        <div class="toggle-switch"></div>
+        <span class="toggle-label">Kirim secara anonim</span>
+      </div>
+      <div id="songNameWrap" style="display:none" class="input-field">
+        <label>Nama kamu</label>
+        <input type="text" id="songName" placeholder="nama / alias" maxlength="40" />
+      </div>
+
+      <button class="btn-submit" id="submitSongfes">
+        <i class="fas fa-music"></i> Kirim Request
+      </button>
+    </div>
+  </div>
+
+  <div id="feedPage" class="page">
+    <div class="feed-header">
+      <div class="feed-title">
+        <i class="fas fa-list-ul" style="color:var(--blue)"></i> Feed PNC
+      </div>
+      <span class="count-badge" id="feedCountBadge">0 postingan</span>
+    </div>
+    <div id="feedList"></div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-item" data-nav="menfess"><i class="fas fa-feather-alt"></i><span>Menfess</span></button>
+  <button class="nav-item" data-nav="songfes"><i class="fas fa-headphones"></i><span>Songfes</span></button>
+  <button class="nav-item" data-nav="feed"><i class="fas fa-list-ul"></i><span>Feed PNC</span></button>
+</nav>
+
+<div id="globalToast" class="toast-message"><i class="fas fa-check-circle" style="color:var(--blue)"></i><span id="toastText"></span></div>
+<div id="musicModal" class="modal"><div class="modal-content"><div class="modal-header"><h4><i class="fas fa-music"></i> YouTube Music Player</h4><button class="close-modal">&times;</button></div><div id="playerContainer"><div class="modal-loading"><i class="fas fa-circle-notch fa-spin"></i><p>Memuat pemutar musik...</p></div></div></div></div>
+
+<script>
+// ============================================================
+// 🔑 API KEY SUDAH DI PASANG!
+// ============================================================
+const YOUTUBE_API_KEY = "AIzaSyCTW69xlCOgtjonm_WdtWjMfoyGg29mI10";
+// ============================================================
+
+let posts = JSON.parse(localStorage.getItem('pnc_menfess_v2') || '[]');
+let currentMoodMenf = '';
+let menfAnonState = true;
+let songAnonState = true;
+
+function saveData() { localStorage.setItem('pnc_menfess_v2', JSON.stringify(posts)); }
+function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
+
+function navigateTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById(page + 'Page').classList.add('active-page');
+  document.querySelector(`.nav-item[data-nav="${page}"]`).classList.add('active');
+  if (page === 'feed') renderFeed();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.nav)));
+
+function initToggle(toggleId, nameWrapId, stateRef, setStateFn) {
+  const toggle = document.getElementById(toggleId);
+  toggle.addEventListener('click', () => {
+    const newState = !stateRef();
+    setStateFn(newState);
+    toggle.classList.toggle('on', newState);
+    document.getElementById(nameWrapId).style.display = newState ? 'none' : 'block';
+  });
+}
+initToggle('menfAnonToggle', 'menfNameWrap', () => menfAnonState, (v) => menfAnonState = v);
+initToggle('songAnonToggle', 'songNameWrap', () => songAnonState, (v) => songAnonState = v);
+
+document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    currentMoodMenf = chip.dataset.mood;
+  });
+});
+
+function setupCounter(inputId, counterId, max) {
+  const el = document.getElementById(inputId);
+  const out = document.getElementById(counterId);
+  el.addEventListener('input', () => out.textContent = `${el.value.length}/${max}`);
+}
+setupCounter('menfMsg', 'menfChar', 500);
+setupCounter('songMsgReq', 'songMsgChar', 280);
+
+let toastTimer;
+function showToast(msg, icon = 'fas fa-check-circle') {
+  const toast = document.getElementById('globalToast');
+  const iconEl = toast.querySelector('i');
+  iconEl.className = icon;
+  document.getElementById('toastText').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+function playVideo(videoId, title) {
+  const modal = document.getElementById('musicModal');
+  const playerContainer = document.getElementById('playerContainer');
+  modal.classList.add('active');
+  playerContainer.innerHTML = `<div class="player-wrapper"><iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+}
+
+async function searchAndPlay(title, artist) {
+  const modal = document.getElementById('musicModal');
+  const playerContainer = document.getElementById('playerContainer');
+  modal.classList.add('active');
+  playerContainer.innerHTML = `<div class="modal-loading"><i class="fas fa-circle-notch fa-spin"></i><p>Mencari "${escapeHtml(title)}"...</p></div>`;
+  
+  let searchQuery = `${title} ${artist || ''} official audio`;
+  try {
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(searchQuery)}&type=video&key=${YOUTUBE_API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.error) throw new Error(data.error.message);
+    if (!data.items || data.items.length === 0) throw new Error('Video tidak ditemukan');
+    
+    const videoId = data.items[0].id.videoId;
+    playVideo(videoId, title);
+  } catch (error) {
+    playerContainer.innerHTML = `<div class="modal-loading"><i class="fas fa-exclamation-triangle" style="color:#ff9800"></i><p>Gagal memutar: ${error.message}</p><p style="font-size:0.8rem;margin-top:8px;">Coba lagi nanti</p><button id="closeModalBtn" style="margin-top:16px;background:#2563eb;border:none;padding:8px 20px;border-radius:40px;color:white;cursor:pointer;">Tutup</button></div>`;
+    document.getElementById('closeModalBtn')?.addEventListener('click', () => modal.classList.remove('active'));
+  }
+}
+
+document.querySelector('.close-modal').addEventListener('click', () => {
+  document.getElementById('musicModal').classList.remove('active');
+  document.getElementById('playerContainer').innerHTML = '<div class="modal-loading"><i class="fas fa-circle-notch fa-spin"></i><p>Memuat pemutar musik...</p></div>';
+});
+document.getElementById('musicModal').addEventListener('click', (e) => { if (e.target === document.getElementById('musicModal')) document.querySelector('.close-modal').click(); });
+
+document.getElementById('submitMenfess').addEventListener('click', () => {
+  const msg = document.getElementById('menfMsg').value.trim();
+  if (!msg) { showToast('Pesan tidak boleh kosong!', 'fas fa-exclamation-circle'); return; }
+  const from = menfAnonState ? 'Anonim' : (document.getElementById('menfName').value.trim() || 'Anonim');
+  const to = document.getElementById('menfTo').value.trim();
+  const mood = currentMoodMenf || '';
+  posts.unshift({ id: Date.now(), type: 'menfes', msg, from, to, mood, time: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }), reactions: { '❤️': 0, '💬': 0, '🎧': 0 }, reacted: {} });
+  saveData();
+  document.getElementById('menfMsg').value = ''; document.getElementById('menfTo').value = ''; document.getElementById('menfChar').textContent = '0/500'; document.getElementById('menfName').value = '';
+  document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(c => c.classList.remove('selected')); currentMoodMenf = '';
+  showToast('Menfess berhasil dikirim! 💜');
+});
+
+document.getElementById('submitSongfes').addEventListener('click', () => {
+  const title = document.getElementById('songTitle').value.trim();
+  if (!title) { showToast('Judul lagu harus diisi!', 'fas fa-exclamation-circle'); return; }
+  const from = songAnonState ? 'Anonim' : (document.getElementById('songName').value.trim() || 'Anonim');
+  const artist = document.getElementById('songArtist').value.trim();
+  const msg = document.getElementById('songMsgReq').value.trim();
+  const to = document.getElementById('songTo').value.trim();
+  posts.unshift({ id: Date.now(), type: 'songfes', title, artist, msg, from, to, time: new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' }), reactions: { '❤️': 0, '💬': 0, '🎧': 0 }, reacted: {} });
+  saveData();
+  document.getElementById('songTitle').value = ''; document.getElementById('songArtist').value = ''; document.getElementById('songMsgReq').value = ''; document.getElementById('songTo').value = ''; document.getElementById('songMsgChar').textContent = '0/280'; document.getElementById('songName').value = '';
+  showToast('Request lagu dikirim! 🎶');
+});
+
+function renderFeed() {
+  const list = document.getElementById('feedList');
+  document.getElementById('feedCountBadge').textContent = posts.length + ' postingan';
+  if (!posts.length) { list.innerHTML = '<div class="empty-feed"><i class="fas fa-inbox"></i><p>Belum ada suara.<br>Yuk kirim menfess atau request lagu pertama!</p></div>'; return; }
+  list.innerHTML = posts.map((post, idx) => {
+    const reacts = post.reactions || { '❤️': 0, '💬': 0, '🎧': 0 };
+    const reacted = post.reacted || {};
+    const reactionHtml = Object.entries(reacts).map(([emoji, count]) => `<button class="reaction ${reacted[emoji] ? 'reacted' : ''}" data-idx="${idx}" data-emoji="${emoji}">${emoji} ${count}</button>`).join('');
+    if (post.type === 'menfes') {
+      return `<div class="post-card"><div class="badge-type"><i class="fas fa-envelope"></i> Menfess PNC</div><div class="post-meta"><span class="sender"><i class="fas fa-user-secret"></i> ${escapeHtml(post.from)}${post.to ? ` → <strong>${escapeHtml(post.to)}</strong>` : ''}</span><span class="post-time">${post.time || ''}</span></div><div class="message-text">${escapeHtml(post.msg)}</div>${post.mood ? `<div><span class="mood-tag">${post.mood}</span></div>` : ''}<div class="reaction-row">${reactionHtml}</div></div>`;
+    } else {
+      return `<div class="post-card"><div class="badge-type badge-song"><i class="fas fa-music"></i> Songfes PNC</div><div class="post-meta"><span class="sender"><i class="fas fa-user-secret"></i> ${escapeHtml(post.from)}${post.to ? ` → <strong>${escapeHtml(post.to)}</strong>` : ''}</span><span class="post-time">${post.time || ''}</span></div><div class="song-preview"><div class="song-info"><div class="song-icon-wrap"><i class="fas fa-music"></i></div><div><div class="song-title-text">${escapeHtml(post.title)}</div>${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}</div></div><button class="btn-play" data-title="${escapeHtml(post.title)}" data-artist="${escapeHtml(post.artist || '')}"><i class="fas fa-play"></i> Putar</button></div>${post.msg ? `<div class="message-text" style="font-size:0.83rem; color:var(--muted);">"${escapeHtml(post.msg)}"</div>` : ''}<div class="reaction-row">${reactionHtml}</div></div>`;
+    }
+  }).join('');
+  list.querySelectorAll('.reaction').forEach(btn => btn.addEventListener('click', () => { const idx = parseInt(btn.dataset.idx); const emoji = btn.dataset.emoji; const p = posts[idx]; if (!p.reactions) p.reactions = { '❤️': 0, '💬': 0, '🎧': 0 }; if (!p.reacted) p.reacted = {}; if (p.reacted[emoji]) { p.reactions[emoji] = Math.max(0, p.reactions[emoji] - 1); delete p.reacted[emoji]; } else { p.reactions[emoji] = (p.reactions[emoji] || 0) + 1; p.reacted[emoji] = true; } saveData(); renderFeed(); }));
+  list.querySelectorAll('.btn-play').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); searchAndPlay(btn.dataset.title, btn.dataset.artist); }));
+}
+
+if (!posts.length) {
+  posts = [
+    { id: 1, type: 'menfes', msg: 'Kak panitia MABA, kakak baik bangettt! Makasih udah sabar ngurus kita-kita 😊', from: 'Anonim', to: 'Kak Ocha', mood: '🥰 Suka', time: 'Kemarin, 13:22', reactions: { '❤️': 5, '💬': 1, '🎧': 0 }, reacted: {} },
+    { id: 2, type: 'songfes', title: 'Tutur Batin', artist: 'Yura Yunita', msg: 'buat yang lagi berjuang skripsi, kalian pasti bisa!', from: 'Anonim', to: 'Semua anak PNC', time: 'Kemarin, 09:10', reactions: { '❤️': 3, '💬': 2, '🎧': 7 }, reacted: {} },
+    { id: 3, type: 'menfes', msg: 'Ada seseorang di kelas TI-2B yang senyumnya bikin hari jadi lebih cerah. Semoga dia tau 💙', from: 'Anonim', to: '', mood: '💭 Rindu', time: 'Hari ini, 08:05', reactions: { '❤️': 11, '💬': 3, '🎧': 0 }, reacted: {} }
+  ];
+  saveData();
+}
+
+navigateTo('menfess');
+</script>
+</body>
+</html>

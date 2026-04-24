@@ -608,7 +608,7 @@
     <i class="fas fa-university"></i> POLITEKNIK NEGERI CILACAP
   </div>
   <h1>Menfess PNC</h1>
-  <p class="tagline">bisikkan rasa, dedikasikan nada • anonim sepenuhnya</p>
+  <p class="tagline">seru seruan aja yagesyaaa</p>
 </div>
 
 <div class="container">
@@ -740,10 +740,13 @@
 
 <script>
 // ============================================================
-// 🔑 SUPABASE CONFIG
+// 🔑 SUPABASE CONFIG - UDAH DI SET PAKE PUNYA LO!
 // ============================================================
 const SUPABASE_URL = "https://vtwcjyyjzvyznezzbydq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0d2NqeXlqenZ5em5lenpieWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5OTk2NDIsImV4cCI6MjA5MjU3NTY0Mn0.Q_XXJJWldMCw4EScC7u-DLY0oW7uwt8NqRJxfYUJxUk";
+
+// YouTube API Key
+const YOUTUBE_API_KEY = "AIzaSyCTW69xlCOgtjonm_WdtWjMfoyGg29mI10";
 
 let posts = [];
 let currentMoodMenf = '';
@@ -792,7 +795,7 @@ async function savePost(post) {
         if (!response.ok) throw new Error("Gagal simpan ke database");
         
         showToast("Berhasil disimpan!", "fas fa-check-circle");
-        await loadPosts();
+        await loadPosts(); // Refresh feed
         return true;
     } catch (error) {
         console.error("Error saving post:", error);
@@ -955,40 +958,21 @@ function playVideoInPlayer(videoId, title, artist) {
     showToast(`Memutar: ${title}`, 'fas fa-play');
 }
 
-// ============================================================
-// PAKE PIPED API - GRATIS, NO LIMIT, NO API KEY!
-// ============================================================
 async function searchAndPlay(title, artist) {
-    if (!title) return;
-
-    let searchQuery = `${title} ${artist || ''}`;
     showToast(`Mencari "${title}"...`, 'fas fa-circle-notch fa-spin');
-
+    
+    let searchQuery = `${title} ${artist || ''} official audio`;
     try {
-        // Pake Piped API (gak pake limit, gak pake API key)
-        const apiUrl = `https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(searchQuery)}&filter=videos`;
-        const response = await fetch(apiUrl);
-
-        if (!response.ok) {
-            throw new Error(`Gagal ambil data (${response.status})`);
-        }
-
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(searchQuery)}&type=video&key=${YOUTUBE_API_KEY}`;
+        const response = await fetch(url);
         const data = await response.json();
-
-        if (!data.items || data.items.length === 0) {
-            throw new Error(`Video "${title}" gak ketemu`);
-        }
-
-        // Ambil video pertama
-        const firstVideo = data.items[0];
-        const videoUrl = firstVideo.url;
-        const videoId = videoUrl.split('watch?v=')[1] || videoUrl.split('/').pop();
-        const videoTitle = firstVideo.title;
-
-        playVideoInPlayer(videoId, videoTitle, artist);
-
+        
+        if (data.error) throw new Error(data.error.message);
+        if (!data.items || data.items.length === 0) throw new Error('Video tidak ditemukan');
+        
+        const videoId = data.items[0].id.videoId;
+        playVideoInPlayer(videoId, title, artist);
     } catch (error) {
-        console.error("Error Piped API:", error);
         showToast(`Gagal: ${error.message}`, 'fas fa-exclamation-triangle');
     }
 }
@@ -1129,7 +1113,7 @@ function renderFeed() {
                 newReactions[emoji] = (newReactions[emoji] || 0) + 1;
                 post.reactions = newReactions;
                 await updateReactions(id, newReactions);
-                await loadPosts();
+                await loadPosts(); // Refresh
             }
         });
     });

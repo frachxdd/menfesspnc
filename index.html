@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
-  <title>Menfess PNC • With Comments</title>
+  <title>Menfess PNC • Politeknik Negeri Cilacap</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
@@ -77,6 +77,48 @@
       color: var(--muted);
       margin-top: 6px;
     }
+
+    /* ========== RUNNING TEXT AUTO SLIDE ========== */
+    .running-text {
+      background: linear-gradient(135deg, var(--blue-mid), var(--blue-light));
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-top: 16px;
+      border-radius: 40px;
+      width: 100%;
+    }
+
+    .running-text-content {
+      display: inline-block;
+      animation: slideLeft 20s linear infinite;
+      font-size: 0.8rem;
+      color: var(--blue);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .running-text-content i {
+      margin: 0 6px;
+      font-size: 0.7rem;
+      color: var(--cyan);
+    }
+
+    @keyframes slideLeft {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    .running-text:hover .running-text-content {
+      animation-play-state: paused;
+    }
+    /* =========================================== */
 
     .container {
       max-width: 680px;
@@ -724,6 +766,19 @@
   </div>
   <h1>Menfess PNC</h1>
   <p class="tagline">seru seruan aja yagesyaaa</p>
+  
+  <!-- ========== RUNNING TEXT AUTO SLIDE ========== -->
+  <div class="running-text">
+    <div class="running-text-content">
+      <i class="fas fa-exclamation-triangle"></i> Mohon gunakan dengan bijak dan utamakan kesopanan 
+      <i class="fas fa-circle" style="font-size: 4px; vertical-align: middle;"></i> Jaga privasi orang lain 
+      <i class="fas fa-circle" style="font-size: 4px; vertical-align: middle;"></i> Tidak menyakiti 
+      <i class="fas fa-circle" style="font-size: 4px; vertical-align: middle;"></i> Think before you type 
+      <i class="fas fa-heart" style="color: #db2777;"></i>
+    </div>
+  </div>
+  <!-- ============================================ -->
+  
 </div>
 
 <div class="container">
@@ -958,7 +1013,6 @@ async function saveComment(postId, commentText, fromUser) {
         
         if (!response.ok) throw new Error("Gagal simpan komentar");
         
-        // Update comment count di posts
         const currentCount = posts.find(p => p.id === postId)?.comment_count || 0;
         await fetch(`${SUPABASE_URL}/rest/v1/posts?id=eq.${postId}`, {
             method: "PATCH",
@@ -1364,7 +1418,6 @@ function renderFeed() {
         }
     }).join('');
     
-    // Attach reaction events
     document.querySelectorAll('.reaction').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -1383,7 +1436,6 @@ function renderFeed() {
         });
     });
     
-    // Attach play events
     document.querySelectorAll('.btn-play').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1392,11 +1444,9 @@ function renderFeed() {
     });
 }
 
-// Make functions global for onclick
 window.toggleComments = toggleComments;
 window.submitComment = submitComment;
 
-// Start the app
 loadPosts();
 navigateTo('menfess');
 </script>

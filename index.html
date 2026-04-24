@@ -472,31 +472,53 @@
       opacity: 1;
     }
 
-    /* ========= DRAGGABLE MINI PLAYER DENGAN SPEKTRUM ========= */
-    #draggablePlayer {
+    /* ========= FLOATING SPECTRUM PLAYER ========= */
+    .floating-player {
       position: fixed;
       bottom: 100px;
       right: 15px;
-      width: 260px;
       z-index: 1000;
-      cursor: grab;
-      user-select: none;
     }
-    #draggablePlayer:active { cursor: grabbing; }
     
+    /* Icon spektrum (kondisi closed) */
+    .spectrum-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: all 0.2s;
+    }
+    .spectrum-icon:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+    .spectrum-icon .bars {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 30px;
+    }
+    .spectrum-icon .bar {
+      width: 5px;
+      background: white;
+      border-radius: 3px;
+      transition: height 0.08s ease;
+    }
+    
+    /* Player card (kondisi open) */
     .player-card {
+      width: 280px;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
       border: 1px solid rgba(255,255,255,0.1);
-      transition: box-shadow 0.3s;
     }
-    .player-card:hover {
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-    }
-    
-    /* Header player (buat drag) */
     .player-header {
       display: flex;
       justify-content: space-between;
@@ -532,29 +554,6 @@
     }
     .player-controls button:hover { opacity: 1; }
     
-    /* SPEKTRUM VISUALIZER */
-    .spectrum-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 3px;
-      height: 50px;
-      background: rgba(0,0,0,0.3);
-      padding: 8px;
-    }
-    .spectrum-bar {
-      width: 4px;
-      background: linear-gradient(180deg, var(--blue), var(--cyan));
-      border-radius: 2px;
-      transition: height 0.05s ease;
-      animation: pulse 0.5s infinite alternate;
-    }
-    @keyframes pulse {
-      0% { opacity: 0.5; }
-      100% { opacity: 1; }
-    }
-    
-    /* Iframe wrapper */
     .iframe-wrapper {
       position: relative;
       width: 100%;
@@ -581,27 +580,7 @@
       text-overflow: ellipsis;
     }
     
-    /* Mode minimized */
-    .draggable-player.minimized {
-      width: 50px;
-    }
-    .draggable-player.minimized .player-header {
-      justify-content: center;
-      padding: 12px 8px;
-    }
-    .draggable-player.minimized .player-title,
-    .draggable-player.minimized .spectrum-container,
-    .draggable-player.minimized .iframe-wrapper,
-    .draggable-player.minimized .player-info,
-    .draggable-player.minimized .minimize-text {
-      display: none;
-    }
-    .draggable-player.minimized .player-controls {
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    .minimize-text { margin-left: auto; font-size: 0.65rem; color: #888; }
+    .hidden { display: none; }
     
     @media (max-width: 480px) {
       .glass-card { padding: 1.2rem 1rem; }
@@ -616,7 +595,8 @@
         justify-content: center;
         margin-top: 6px;
       }
-      #draggablePlayer { width: 240px; }
+      .player-card { width: 260px; }
+      .spectrum-icon { width: 50px; height: 50px; }
     }
   </style>
 </head>
@@ -736,37 +716,29 @@
 
 <div id="globalToast" class="toast-message"><i class="fas fa-check-circle" style="color:var(--blue)"></i><span id="toastText"></span></div>
 
-<!-- DRAGGABLE MINI PLAYER DENGAN SPEKTRUM -->
-<div id="draggablePlayer" class="draggable-player">
-  <div class="player-card">
+<!-- FLOATING PLAYER -->
+<div id="floatingPlayer" class="floating-player">
+  <!-- Icon spektrum (closed state) -->
+  <div id="spectrumIcon" class="spectrum-icon">
+    <div class="bars">
+      <div class="bar" style="height: 15px;"></div>
+      <div class="bar" style="height: 25px;"></div>
+      <div class="bar" style="height: 35px;"></div>
+      <div class="bar" style="height: 45px;"></div>
+      <div class="bar" style="height: 30px;"></div>
+      <div class="bar" style="height: 20px;"></div>
+    </div>
+  </div>
+  
+  <!-- Player card (open state) -->
+  <div id="playerCard" class="player-card hidden">
     <div class="player-header" id="dragHandle">
       <i class="fas fa-grip-vertical drag-icon"></i>
       <span class="player-title"><i class="fas fa-music"></i> Music Player</span>
       <div class="player-controls">
-        <button id="minimizePlayerBtn"><i class="fas fa-window-minimize"></i></button>
-        <button id="closePlayerBtn"><i class="fas fa-times"></i></button>
+        <button id="closePlayerBtn"><i class="fas fa-compress"></i></button>
       </div>
     </div>
-    
-    <!-- SPEKTRUM VISUALIZER -->
-    <div class="spectrum-container" id="spectrumContainer">
-      <div class="spectrum-bar" style="height: 15px;"></div>
-      <div class="spectrum-bar" style="height: 25px;"></div>
-      <div class="spectrum-bar" style="height: 35px;"></div>
-      <div class="spectrum-bar" style="height: 45px;"></div>
-      <div class="spectrum-bar" style="height: 55px;"></div>
-      <div class="spectrum-bar" style="height: 50px;"></div>
-      <div class="spectrum-bar" style="height: 40px;"></div>
-      <div class="spectrum-bar" style="height: 30px;"></div>
-      <div class="spectrum-bar" style="height: 20px;"></div>
-      <div class="spectrum-bar" style="height: 10px;"></div>
-      <div class="spectrum-bar" style="height: 18px;"></div>
-      <div class="spectrum-bar" style="height: 28px;"></div>
-      <div class="spectrum-bar" style="height: 38px;"></div>
-      <div class="spectrum-bar" style="height: 48px;"></div>
-      <div class="spectrum-bar" style="height: 52px;"></div>
-    </div>
-    
     <div class="iframe-wrapper">
       <iframe id="miniPlayerIframe" allow="autoplay"></iframe>
     </div>
@@ -786,15 +758,15 @@ let currentMoodMenf = '';
 let menfAnonState = true;
 let songAnonState = true;
 
-// Animasi spektrum
+// Animasi spektrum di icon
 let spectrumInterval = null;
 
 function startSpectrumAnimation() {
   if (spectrumInterval) clearInterval(spectrumInterval);
   spectrumInterval = setInterval(() => {
-    const bars = document.querySelectorAll('.spectrum-bar');
+    const bars = document.querySelectorAll('#spectrumIcon .bar');
     bars.forEach(bar => {
-      const randomHeight = Math.floor(Math.random() * 45) + 8;
+      const randomHeight = Math.floor(Math.random() * 35) + 8;
       bar.style.height = randomHeight + 'px';
     });
   }, 100);
@@ -805,7 +777,7 @@ function stopSpectrumAnimation() {
     clearInterval(spectrumInterval);
     spectrumInterval = null;
   }
-  const bars = document.querySelectorAll('.spectrum-bar');
+  const bars = document.querySelectorAll('#spectrumIcon .bar');
   bars.forEach(bar => {
     bar.style.height = '20px';
   });
@@ -814,58 +786,68 @@ function stopSpectrumAnimation() {
 // Draggable functionality
 let isDragging = false;
 let dragOffsetX = 0, dragOffsetY = 0;
-const player = document.getElementById('draggablePlayer');
+const playerContainer = document.getElementById('floatingPlayer');
 const dragHandle = document.getElementById('dragHandle');
+let isOpen = false;
 
-dragHandle.addEventListener('mousedown', (e) => {
+function openPlayer() {
+  document.getElementById('spectrumIcon').classList.add('hidden');
+  document.getElementById('playerCard').classList.remove('hidden');
+  isOpen = true;
+  startSpectrumAnimation();
+}
+
+function closePlayer() {
+  document.getElementById('spectrumIcon').classList.remove('hidden');
+  document.getElementById('playerCard').classList.add('hidden');
+  isOpen = false;
+  stopSpectrumAnimation();
+}
+
+// Toggle open/close via icon click
+document.getElementById('spectrumIcon').addEventListener('click', openPlayer);
+document.getElementById('closePlayerBtn').addEventListener('click', () => {
+  closePlayer();
+});
+
+// Draggable untuk seluruh floating container (baik icon maupun card)
+let isDraggingAny = false;
+let dragStartX = 0, dragStartY = 0;
+let playerStartLeft = 0, playerStartTop = 0;
+
+function getPlayerPosition() {
+  const rect = playerContainer.getBoundingClientRect();
+  return { left: rect.left, top: rect.top };
+}
+
+playerContainer.addEventListener('mousedown', (e) => {
   if (e.target.closest('.player-controls')) return;
-  isDragging = true;
-  const rect = player.getBoundingClientRect();
-  dragOffsetX = e.clientX - rect.left;
-  dragOffsetY = e.clientY - rect.top;
-  player.style.cursor = 'grabbing';
+  if (e.target.closest('#closePlayerBtn')) return;
+  isDraggingAny = true;
+  const rect = playerContainer.getBoundingClientRect();
+  dragStartX = e.clientX - rect.left;
+  dragStartY = e.clientY - rect.top;
+  playerContainer.style.cursor = 'grabbing';
   e.preventDefault();
 });
 
 document.addEventListener('mousemove', (e) => {
-  if (!isDragging) return;
-  let newLeft = e.clientX - dragOffsetX;
-  let newTop = e.clientY - dragOffsetY;
+  if (!isDraggingAny) return;
+  let newLeft = e.clientX - dragStartX;
+  let newTop = e.clientY - dragStartY;
   
-  // Batasi di layar
-  newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - player.offsetWidth));
-  newTop = Math.max(0, Math.min(newTop, window.innerHeight - player.offsetHeight));
+  newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - playerContainer.offsetWidth));
+  newTop = Math.max(0, Math.min(newTop, window.innerHeight - playerContainer.offsetHeight));
   
-  player.style.left = newLeft + 'px';
-  player.style.right = 'auto';
-  player.style.bottom = 'auto';
-  player.style.top = newTop + 'px';
+  playerContainer.style.left = newLeft + 'px';
+  playerContainer.style.right = 'auto';
+  playerContainer.style.bottom = 'auto';
+  playerContainer.style.top = newTop + 'px';
 });
 
 document.addEventListener('mouseup', () => {
-  isDragging = false;
-  player.style.cursor = '';
-});
-
-// Minimize & Close
-let isMinimized = false;
-document.getElementById('minimizePlayerBtn').addEventListener('click', () => {
-  isMinimized = !isMinimized;
-  if (isMinimized) {
-    player.classList.add('minimized');
-    stopSpectrumAnimation();
-  } else {
-    player.classList.remove('minimized');
-    startSpectrumAnimation();
-  }
-});
-
-document.getElementById('closePlayerBtn').addEventListener('click', () => {
-  const iframe = document.getElementById('miniPlayerIframe');
-  iframe.src = 'about:blank';
-  document.getElementById('playerInfo').innerHTML = 'Player ditutup';
-  stopSpectrumAnimation();
-  showToast('Player ditutup', 'fas fa-stop');
+  isDraggingAny = false;
+  playerContainer.style.cursor = '';
 });
 
 function saveData() { localStorage.setItem('pnc_menfess_v2', JSON.stringify(posts)); }
@@ -927,11 +909,10 @@ function playVideoInPlayer(videoId, title, artist) {
   iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
   info.innerHTML = `<i class="fas fa-play"></i> ${title} ${artist ? `- ${artist}` : ''}`;
   
-  if (isMinimized) {
-    document.getElementById('minimizePlayerBtn').click();
+  if (!isOpen) {
+    openPlayer();
   }
   
-  startSpectrumAnimation();
   showToast(`Memutar: ${title}`, 'fas fa-play');
 }
 

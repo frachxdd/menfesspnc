@@ -17,6 +17,7 @@ let openCommentPostId = null;
 let toastTimer;
 let selectedSongData = null;
 let currentAudio = null;
+let activePlayButton = null;
 
 // ============================================================
 // 📡 FUNGSI DATABASE
@@ -203,7 +204,7 @@ function formatNumber(num) {
 }
 
 // ============================================================
-// 🎵 FUNGSI SOUNDCLOUD
+// 🎵 FUNGSI SOUNDCLOUD (DENGAN PAUSE)
 // ============================================================
 async function searchSoundCloud(query) {
     try {
@@ -337,7 +338,7 @@ function showSongSelectionModal(songs, query) {
             const streamUrl = btn.dataset.url;
             const title = btn.dataset.title;
             const artist = btn.dataset.artist;
-            playStreamUrl(streamUrl, title, artist);
+            playStreamUrl(streamUrl, title, artist, btn);
         });
     });
     
@@ -369,24 +370,51 @@ function selectSong(song) {
     showToast(`Lagu "${song.title}" dipilih!`, 'fas fa-check-circle');
 }
 
-function playStreamUrl(streamUrl, title, artist) {
+function playStreamUrl(streamUrl, title, artist, buttonElement = null) {
     if (!streamUrl) {
         showToast("Stream URL tidak tersedia", "fas fa-exclamation-circle");
         return;
     }
     
+    // Kalo lagu yang sama lagi diputar, pause aja
+    if (currentAudio && !currentAudio.paused && currentAudio.src === streamUrl) {
+        currentAudio.pause();
+        if (activePlayButton) {
+            activePlayButton.innerHTML = '<i class="fas fa-play"></i> Putar';
+        }
+        activePlayButton = null;
+        showToast(`⏸️ Dipause: ${title}`, 'fas fa-pause');
+        return;
+    }
+    
+    // Hentikan audio yang sedang berjalan
     if (currentAudio) {
         currentAudio.pause();
         currentAudio.remove();
+        if (activePlayButton) {
+            activePlayButton.innerHTML = '<i class="fas fa-play"></i> Putar';
+        }
         currentAudio = null;
     }
     
     const audio = new Audio(streamUrl);
     audio.autoplay = true;
+    currentAudio = audio;
+    
+    // Update tombol jadi pause
+    if (buttonElement) {
+        buttonElement.innerHTML = '<i class="fas fa-pause"></i> Pause';
+        activePlayButton = buttonElement;
+    }
     
     audio.addEventListener('ended', () => {
         audio.remove();
         if (currentAudio === audio) currentAudio = null;
+        if (activePlayButton) {
+            activePlayButton.innerHTML = '<i class="fas fa-play"></i> Putar';
+            activePlayButton = null;
+        }
+        showToast(`🎵 Selesai: ${title}`, 'fas fa-check');
     });
     
     audio.addEventListener('error', (e) => {
@@ -394,27 +422,30 @@ function playStreamUrl(streamUrl, title, artist) {
         showToast("Gagal memutar lagu", "fas fa-exclamation-circle");
         audio.remove();
         if (currentAudio === audio) currentAudio = null;
+        if (activePlayButton) {
+            activePlayButton.innerHTML = '<i class="fas fa-play"></i> Putar';
+            activePlayButton = null;
+        }
     });
     
     document.body.appendChild(audio);
-    currentAudio = audio;
     
     showToast(`🎵 Memutar: ${title}`, 'fas fa-play');
 }
 
-function playSongFromPost(post) {
+function playSongFromPost(post, buttonElement = null) {
     if (!post.soundcloud_data || !post.soundcloud_data.stream_url) {
         showToast("Stream URL tidak tersedia", "fas fa-exclamation-circle");
         return;
     }
     
-    playStreamUrl(post.soundcloud_data.stream_url, post.title, post.artist);
+    playStreamUrl(post.soundcloud_data.stream_url, post.title, post.artist, buttonElement);
 }
 
-function playSongFromPostId(postId) {
+function playSongFromPostId(postId, buttonElement) {
     const post = posts.find(p => p.id === postId);
     if (post) {
-        playSongFromPost(post);
+        playSongFromPost(post, buttonElement);
     } else {
         showToast("Postingan tidak ditemukan", "fas fa-exclamation-circle");
     }
@@ -534,7 +565,7 @@ function renderFeed() {
                                 ${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}
                             </div>
                         </div>
-                        <button class="btn-play" onclick="playSongFromPostId(${post.id})">
+                        <button class="btn-play" onclick="playSongFromPostId(${post.id}, this)">
                             <i class="fas fa-play"></i> Putar
                         </button>
                     </div>
@@ -736,6 +767,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.toggleComments = toggleComments;
 window.submitComment = submitComment;
 window.playSongFromPostId = playSongFromPostId;
+window.playStreamUrl = playStreamUrl;
 
 // Initial load
 loadPosts();

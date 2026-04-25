@@ -3,7 +3,6 @@
 // ============================================================
 const SUPABASE_URL = "https://vtwcjyyjzvyznezzbydq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0d2NqeXlqenZ5em5lenpieWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5OTk2NDIsImV4cCI6MjA5MjU3NTY0Mn0.Q_XXJJWldMCw4EScC7u-DLY0oW7uwt8NqRJxfYUJxUk";
-const YOUTUBE_API_KEY = "AIzaSyCTW69xlCOgtjonm_WdtWjMfoyGg29mI10";
 const SOUNDCLOUD_API_URL = "https://kaizenapi.my.id/api/downloader/soundcloud";
 
 // ============================================================
@@ -20,6 +19,7 @@ let isOpen = false;
 let openCommentPostId = null;
 let toastTimer;
 let selectedSongData = null;
+let currentAudio = null;
 
 // ============================================================
 // 📡 DATABASE FUNCTIONS
@@ -206,7 +206,7 @@ function formatNumber(num) {
 // ============================================================
 async function searchSoundCloud(query) {
     try {
-        showToast(`Mencari "${query}" di SoundCloud...`, 'fas fa-circle-notch fa-spin');
+        showToast(`Mencari "${query}"...`, 'fas fa-circle-notch fa-spin');
         
         const response = await fetch(`${SOUNDCLOUD_API_URL}?query=${encodeURIComponent(query)}`, {
             headers: { "accept": "application/json" }
@@ -360,164 +360,29 @@ function selectSong(song) {
     document.getElementById('songArtist').value = song.artist;
     
     showToast(`Lagu "${song.title}" dipilih!`, 'fas fa-check-circle');
-    
-    addPreviewButton(song);
-}
-
-function addPreviewButton(song) {
-    const songTitleField = document.getElementById('songTitle').parentElement;
-    const existingPreview = document.getElementById('inlinePreviewBtn');
-    if (existingPreview) existingPreview.remove();
-    
-    const previewBtn = document.createElement('button');
-    previewBtn.id = 'inlinePreviewBtn';
-    previewBtn.innerHTML = '<i class="fas fa-play"></i> Preview';
-    previewBtn.style.cssText = `
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: linear-gradient(135deg, #2563eb, #0891b2);
-        border: none;
-        color: white;
-        padding: 4px 12px;
-        border-radius: 40px;
-        font-size: 0.7rem;
-        cursor: pointer;
-    `;
-    
-    previewBtn.onclick = () => {
-        if (song.stream_url) {
-            playStreamUrl(song.stream_url, song.title, song.artist);
-        } else {
-            searchAndPlay(song.title, song.artist);
-        }
-    };
-    
-    songTitleField.style.position = 'relative';
-    songTitleField.appendChild(previewBtn);
 }
 
 function playStreamUrl(streamUrl, title, artist) {
-    const iframe = document.getElementById('musicIframe');
-    const info = document.getElementById('musicInfo');
-    const musicIcon = document.getElementById('musicIcon');
-    
-    const existingAudio = document.getElementById('soundcloudAudio');
-    if (existingAudio) existingAudio.remove();
-    
-    const audio = document.createElement('audio');
-    audio.id = 'soundcloudAudio';
-    audio.src = streamUrl;
-    audio.controls = true;
-    audio.autoplay = true;
-    audio.style.cssText = `
-        position: fixed;
-        bottom: 80px;
-        right: 12px;
-        width: 260px;
-        z-index: 1001;
-        background: #1a1a2e;
-        border-radius: 18px;
-        padding: 8px;
-    `;
-    
-    iframe.src = '';
-    info.innerHTML = `<i class="fas fa-music"></i> ${title} ${artist ? `- ${artist}` : ''} (SoundCloud)`;
-    
-    document.body.appendChild(audio);
-    
-    if (!isOpen) openPlayer();
-    musicIcon.classList.add('playing');
-    showToast(`Memutar: ${title}`, 'fas fa-play');
-    
-    audio.addEventListener('ended', () => {
-        audio.remove();
-        info.innerHTML = 'Belum ada lagu diputar';
-    });
-}
-
-function playSoundCloudStream(streamUrl, title, artist) {
-    const iframe = document.getElementById('musicIframe');
-    const info = document.getElementById('musicInfo');
-    const musicIcon = document.getElementById('musicIcon');
-    
-    const existingAudio = document.getElementById('soundcloudAudio');
-    if (existingAudio) existingAudio.remove();
-    
-    const audio = document.createElement('audio');
-    audio.id = 'soundcloudAudio';
-    audio.src = streamUrl;
-    audio.controls = true;
-    audio.autoplay = true;
-    
-    iframe.src = '';
-    info.innerHTML = `<i class="fas fa-music"></i> ${title} ${artist ? `- ${artist}` : ''} (SoundCloud)`;
-    
-    document.body.appendChild(audio);
-    if (!isOpen) openPlayer();
-    musicIcon.classList.add('playing');
-    showToast(`Memutar: ${title}`, 'fas fa-play');
-    
-    audio.addEventListener('ended', () => {
-        audio.remove();
-        info.innerHTML = 'Belum ada lagu diputar';
-    });
-}
-
-// ============================================================
-// 🎵 MUSIC PLAYER FUNCTIONS
-// ============================================================
-function openPlayer() {
-    const musicIcon = document.getElementById('musicIcon');
-    const musicPlayerCard = document.getElementById('musicPlayerCard');
-    musicIcon.classList.add('hidden');
-    musicPlayerCard.classList.remove('hidden');
-    isOpen = true;
-}
-
-function closePlayer() {
-    const musicIcon = document.getElementById('musicIcon');
-    const musicPlayerCard = document.getElementById('musicPlayerCard');
-    const audio = document.getElementById('soundcloudAudio');
-    if (audio) audio.remove();
-    musicIcon.classList.remove('hidden');
-    musicPlayerCard.classList.add('hidden');
-    isOpen = false;
-}
-
-function playVideoInPlayer(videoId, title, artist) {
-    const iframe = document.getElementById('musicIframe');
-    const info = document.getElementById('musicInfo');
-    const musicIcon = document.getElementById('musicIcon');
-    const audio = document.getElementById('soundcloudAudio');
-    if (audio) audio.remove();
-    
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
-    info.innerHTML = `<i class="fas fa-play"></i> ${title} ${artist ? `- ${artist}` : ''}`;
-    
-    if (!isOpen) openPlayer();
-    musicIcon.classList.add('playing');
-    showToast(`Memutar: ${title}`, 'fas fa-play');
-}
-
-async function searchAndPlay(title, artist) {
-    showToast(`Mencari "${title}"...`, 'fas fa-circle-notch fa-spin');
-    let searchQuery = `${title} ${artist || ''} official audio`;
-    
-    try {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(searchQuery)}&type=video&key=${YOUTUBE_API_KEY}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data.error) throw new Error(data.error.message);
-        if (!data.items || data.items.length === 0) throw new Error('Video tidak ditemukan');
-        
-        const videoId = data.items[0].id.videoId;
-        playVideoInPlayer(videoId, title, artist);
-    } catch (error) {
-        showToast(`Gagal: ${error.message}`, 'fas fa-exclamation-triangle');
+    // Stop current audio if playing
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.remove();
     }
+    
+    const audio = document.createElement('audio');
+    audio.src = streamUrl;
+    audio.autoplay = true;
+    audio.style.display = 'none';
+    
+    audio.addEventListener('ended', () => {
+        audio.remove();
+        if (currentAudio === audio) currentAudio = null;
+    });
+    
+    document.body.appendChild(audio);
+    currentAudio = audio;
+    
+    showToast(`🎵 Memutar: ${title}`, 'fas fa-play');
 }
 
 // ============================================================
@@ -614,9 +479,7 @@ function renderFeed() {
             `;
         } else {
             const hasSoundCloud = post.soundcloud_data && post.soundcloud_data.stream_url;
-            const playHandler = hasSoundCloud 
-                ? `playSoundCloudStream('${post.soundcloud_data.stream_url}', '${escapeHtml(post.title)}', '${escapeHtml(post.artist || '')}')`
-                : `searchAndPlay('${escapeHtml(post.title)}', '${escapeHtml(post.artist || '')}')`;
+            const streamUrl = hasSoundCloud ? post.soundcloud_data.stream_url : null;
             
             return `
                 <div class="post-card" data-id="${post.id}">
@@ -628,7 +491,7 @@ function renderFeed() {
                     <div class="song-preview">
                         <div class="song-info">
                             ${hasSoundCloud && post.soundcloud_data.artwork ? 
-                                `<img src="${post.soundcloud_data.artwork}" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover;">` :
+                                `<img src="${post.soundcloud_data.artwork}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">` :
                                 `<div class="song-icon-wrap"><i class="fas fa-music"></i></div>`
                             }
                             <div>
@@ -636,8 +499,8 @@ function renderFeed() {
                                 ${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}
                             </div>
                         </div>
-                        <button class="btn-play" onclick="${playHandler}">
-                            <i class="fas fa-play"></i> Putar
+                        <button class="btn-play" onclick="playStreamUrl('${streamUrl || ''}', '${escapeHtml(post.title)}', '${escapeHtml(post.artist || '')}')">
+                            <i class="fas fa-play"></i>
                         </button>
                     </div>
                     ${post.msg ? `<div class="message-text" style="font-size:0.8rem; color:#64748b;">"${escapeHtml(post.msg)}"</div>` : ''}
@@ -692,10 +555,10 @@ function addSearchButton() {
     const songTitleField = document.getElementById('songTitle').parentElement;
     const searchBtn = document.createElement('button');
     searchBtn.id = 'searchSoundCloudBtn';
-    searchBtn.innerHTML = '<i class="fas fa-search"></i> Cari di SoundCloud';
+    searchBtn.innerHTML = '<i class="fas fa-search"></i> Cari Lagu';
     searchBtn.style.cssText = `
         margin-top: 8px;
-        background: linear-gradient(135deg, #ff7700, #ff4400);
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
         border: none;
         color: white;
         padding: 8px 16px;
@@ -704,7 +567,17 @@ function addSearchButton() {
         cursor: pointer;
         width: 100%;
         font-weight: 600;
+        transition: all 0.2s;
     `;
+    
+    searchBtn.onmouseover = () => {
+        searchBtn.style.transform = 'translateY(-1px)';
+        searchBtn.style.boxShadow = '0 4px 12px rgba(37,99,235,0.3)';
+    };
+    searchBtn.onmouseout = () => {
+        searchBtn.style.transform = 'translateY(0)';
+        searchBtn.style.boxShadow = 'none';
+    };
     
     searchBtn.onclick = async () => {
         const query = document.getElementById('songTitle').value.trim();
@@ -717,7 +590,7 @@ function addSearchButton() {
         if (results.length > 0) {
             showSongSelectionModal(results, query);
         } else {
-            showToast('Lagu tidak ditemukan di SoundCloud', 'fas fa-exclamation-circle');
+            showToast('Lagu tidak ditemukan', 'fas fa-exclamation-circle');
         }
     };
     
@@ -809,50 +682,12 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
     document.getElementById('songMsgChar').textContent = '0/280'; 
     document.getElementById('songName').value = '';
     selectedSongData = null;
-    
-    const inlinePreview = document.getElementById('inlinePreviewBtn');
-    if (inlinePreview) inlinePreview.remove();
 });
 
 // Navigation
 document.querySelectorAll('.nav-item').forEach(btn => 
     btn.addEventListener('click', () => navigateTo(btn.dataset.nav))
 );
-
-// Music player drag functionality
-const musicFloat = document.getElementById('musicFloat');
-const musicIcon = document.getElementById('musicIcon');
-const closePlayerBtn = document.getElementById('closePlayerBtn');
-
-musicIcon.addEventListener('click', openPlayer);
-closePlayerBtn.addEventListener('click', closePlayer);
-
-musicFloat.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.player-controls')) return;
-    if (e.target.closest('#closePlayerBtn')) return;
-    isDragging = true;
-    const rect = musicFloat.getBoundingClientRect();
-    dragStartX = e.clientX - rect.left;
-    dragStartY = e.clientY - rect.top;
-    musicFloat.style.cursor = 'grabbing';
-    e.preventDefault();
-});
-
-document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    let newLeft = e.clientX - dragStartX;
-    let newTop = e.clientY - dragStartY;
-    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - musicFloat.offsetWidth));
-    newTop = Math.max(0, Math.min(newTop, window.innerHeight - musicFloat.offsetHeight));
-    musicFloat.style.left = newLeft + 'px';
-    musicFloat.style.right = 'auto';
-    musicFloat.style.top = newTop + 'px';
-});
-
-document.addEventListener('mouseup', () => {
-    isDragging = false;
-    musicFloat.style.cursor = '';
-});
 
 // Add search button when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -862,8 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Make functions globally accessible
 window.toggleComments = toggleComments;
 window.submitComment = submitComment;
-window.playSoundCloudStream = playSoundCloudStream;
-window.searchAndPlay = searchAndPlay;
+window.playStreamUrl = playStreamUrl;
 
 // Initial load
 loadPosts();

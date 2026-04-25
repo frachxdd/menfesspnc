@@ -19,58 +19,6 @@ let selectedSongData = null;
 let currentAudio = null;
 let activePlayButton = null;
 let isUploading = false;
-let supabase = null;
-
-// ============================================================
-// 📡 INIT SUPABASE & REALTIME
-// ============================================================
-function initSupabase() {
-    if (typeof createClient !== 'undefined') {
-        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        subscribeToRealtime();
-        console.log("✅ Supabase initialized with realtime");
-    } else {
-        console.log("⚠️ Supabase library not loaded yet, waiting...");
-        setTimeout(initSupabase, 500);
-    }
-}
-
-function subscribeToRealtime() {
-    if (!supabase) return;
-    
-    // Subscribe ke tabel posts
-    supabase
-        .channel('posts-changes')
-        .on('postgres_changes', 
-            { event: 'INSERT', schema: 'public', table: 'posts' },
-            (payload) => {
-                console.log('🆕 New post:', payload.new);
-                posts.unshift(payload.new);
-                renderFeed();
-                updateFeedCount();
-                showToast("📢 Ada postingan baru!", "fas fa-bell");
-            }
-        )
-        .on('postgres_changes',
-            { event: 'INSERT', schema: 'public', table: 'comments' },
-            (payload) => {
-                console.log('💬 New comment:', payload.new);
-                const newComment = payload.new;
-                if (!comments[newComment.post_id]) {
-                    comments[newComment.post_id] = [];
-                }
-                comments[newComment.post_id].push(newComment);
-                
-                const postIndex = posts.findIndex(p => p.id === newComment.post_id);
-                if (postIndex !== -1) {
-                    posts[postIndex].comment_count = (posts[postIndex].comment_count || 0) + 1;
-                }
-                renderFeed();
-                showToast(`💬 Komentar baru!`, "fas fa-comment");
-            }
-        )
-        .subscribe();
-}
 
 // ============================================================
 // 📡 FUNGSI DATABASE
@@ -261,7 +209,6 @@ function formatNumber(num) {
 // ============================================================
 // 🎵 FUNGSI UPLOAD KE SUPABASE STORAGE
 // ============================================================
-
 async function uploadToStorage(streamUrl, title) {
     if (isUploading) return null;
     
@@ -953,7 +900,6 @@ document.querySelectorAll('.nav-item').forEach(btn =>
 // Add search button when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     addSearchButton();
-    initSupabase();
 });
 
 // Make functions globally accessible

@@ -13,9 +13,6 @@ let comments = {};
 let currentMoodMenf = '';
 let menfAnonState = true;
 let songAnonState = true;
-let isDragging = false;
-let dragStartX = 0, dragStartY = 0;
-let isOpen = false;
 let openCommentPostId = null;
 let toastTimer;
 let selectedSongData = null;
@@ -363,18 +360,27 @@ function selectSong(song) {
 }
 
 function playStreamUrl(streamUrl, title, artist) {
-    // Stop current audio if playing
+    if (!streamUrl) {
+        showToast("Stream URL tidak tersedia", "fas fa-exclamation-circle");
+        return;
+    }
+    
     if (currentAudio) {
         currentAudio.pause();
         currentAudio.remove();
+        currentAudio = null;
     }
     
-    const audio = document.createElement('audio');
-    audio.src = streamUrl;
+    const audio = new Audio(streamUrl);
     audio.autoplay = true;
-    audio.style.display = 'none';
     
     audio.addEventListener('ended', () => {
+        audio.remove();
+        if (currentAudio === audio) currentAudio = null;
+    });
+    
+    audio.addEventListener('error', () => {
+        showToast("Gagal memutar lagu", "fas fa-exclamation-circle");
         audio.remove();
         if (currentAudio === audio) currentAudio = null;
     });
@@ -479,7 +485,8 @@ function renderFeed() {
             `;
         } else {
             const hasSoundCloud = post.soundcloud_data && post.soundcloud_data.stream_url;
-            const streamUrl = hasSoundCloud ? post.soundcloud_data.stream_url : null;
+            const streamUrl = hasSoundCloud ? post.soundcloud_data.stream_url : '';
+            const artwork = hasSoundCloud && post.soundcloud_data.artwork ? post.soundcloud_data.artwork : null;
             
             return `
                 <div class="post-card" data-id="${post.id}">
@@ -490,8 +497,8 @@ function renderFeed() {
                     </div>
                     <div class="song-preview">
                         <div class="song-info">
-                            ${hasSoundCloud && post.soundcloud_data.artwork ? 
-                                `<img src="${post.soundcloud_data.artwork}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">` :
+                            ${artwork ? 
+                                `<img src="${artwork}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">` :
                                 `<div class="song-icon-wrap"><i class="fas fa-music"></i></div>`
                             }
                             <div>
@@ -499,7 +506,7 @@ function renderFeed() {
                                 ${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}
                             </div>
                         </div>
-                        <button class="btn-play" onclick="playStreamUrl('${streamUrl || ''}', '${escapeHtml(post.title)}', '${escapeHtml(post.artist || '')}')">
+                        <button class="btn-play" onclick="playStreamUrl('${streamUrl.replace(/'/g, "\\'")}', '${escapeHtml(post.title).replace(/'/g, "\\'")}', '${escapeHtml(post.artist || '').replace(/'/g, "\\'")}')">
                             <i class="fas fa-play"></i>
                         </button>
                     </div>
@@ -553,6 +560,10 @@ function setupCounter(inputId, counterId, max) {
 
 function addSearchButton() {
     const songTitleField = document.getElementById('songTitle').parentElement;
+    
+    // Cek apakah tombol sudah ada
+    if (document.getElementById('searchSoundCloudBtn')) return;
+    
     const searchBtn = document.createElement('button');
     searchBtn.id = 'searchSoundCloudBtn';
     searchBtn.innerHTML = '<i class="fas fa-search"></i> Cari Lagu';

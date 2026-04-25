@@ -30,7 +30,7 @@
 </div>
 
 <div class="container">
-  <div id="menfessPage" class="page">
+  <div id="menfessPage" class="page active-page">
     <div class="glass-card">
       <div class="form-header">
         <i class="fas fa-envelope-open-text" style="color:var(--blue)"></i>
@@ -81,7 +81,7 @@
         <i class="fas fa-headphones" style="color:var(--cyan)"></i>
         <span>Kirim Songfess</span>
       </div>
-      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC. Klik play buat dengerin!</p>
+      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC.</p>
 
       <div class="input-field">
         <label>🎵 Judul Lagu *</label>
@@ -128,32 +128,12 @@
 </div>
 
 <nav class="bottom-nav">
-  <button class="nav-item" data-nav="menfess"><i class="fas fa-feather-alt"></i><span>Menfess</span></button>
+  <button class="nav-item active" data-nav="menfess"><i class="fas fa-feather-alt"></i><span>Menfess</span></button>
   <button class="nav-item" data-nav="songfes"><i class="fas fa-headphones"></i><span>Songfess</span></button>
   <button class="nav-item" data-nav="feed"><i class="fas fa-list-ul"></i><span>Feed</span></button>
 </nav>
 
 <div id="globalToast" class="toast-message"><i class="fas fa-check-circle" style="color:var(--blue)"></i><span id="toastText"></span></div>
-
-<div id="musicFloat" class="music-float">
-  <div id="musicIcon" class="music-icon">
-    <i class="fas fa-music"></i>
-  </div>
-  
-  <div id="musicPlayerCard" class="music-player-card hidden">
-    <div class="player-header" id="dragHandle">
-      <i class="fas fa-grip-vertical drag-icon"></i>
-      <span class="player-title"><i class="fas fa-headphones"></i> Music Player</span>
-      <div class="player-controls">
-        <button id="closePlayerBtn"><i class="fas fa-compress"></i></button>
-      </div>
-    </div>
-    <div class="iframe-wrapper">
-      <iframe id="musicIframe" allow="autoplay"></iframe>
-    </div>
-    <div class="player-info" id="musicInfo">Belum ada lagu diputar</div>
-  </div>
-</div>
 
 <script src="script.js"></script>
 </body>

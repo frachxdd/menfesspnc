@@ -1,12 +1,12 @@
 // ============================================================
-// 🔑 SUPABASE & API CONFIGURATION
+// 🔑 KONFIGURASI
 // ============================================================
 const SUPABASE_URL = "https://vtwcjyyjzvyznezzbydq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0d2NqeXlqenZ5em5lenpieWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5OTk2NDIsImV4cCI6MjA5MjU3NTY0Mn0.Q_XXJJWldMCw4EScC7u-DLY0oW7uwt8NqRJxfYUJxUk";
 const SOUNDCLOUD_API_URL = "https://kaizenapi.my.id/api/downloader/soundcloud";
 
 // ============================================================
-// 📦 GLOBAL VARIABLES
+// 📦 VARIABEL GLOBAL
 // ============================================================
 let posts = [];
 let comments = {};
@@ -19,7 +19,7 @@ let selectedSongData = null;
 let currentAudio = null;
 
 // ============================================================
-// 📡 DATABASE FUNCTIONS
+// 📡 FUNGSI DATABASE
 // ============================================================
 async function loadPosts() {
     try {
@@ -144,7 +144,7 @@ async function updateReactions(id, reactions) {
 }
 
 // ============================================================
-// 🎨 UI HELPER FUNCTIONS
+// 🎨 FUNGSI BANTUAN UI
 // ============================================================
 function formatTime(createdAt) {
     if (!createdAt) return "Baru saja";
@@ -203,7 +203,7 @@ function formatNumber(num) {
 }
 
 // ============================================================
-// 🎵 SOUNDCLOUD FUNCTIONS
+// 🎵 FUNGSI SOUNDCLOUD
 // ============================================================
 async function searchSoundCloud(query) {
     try {
@@ -478,7 +478,7 @@ function renderCommentSection(postId, commentCount) {
 }
 
 // ============================================================
-// 📝 RENDER FEED (INI YG DIUBAH - TOMBOL PLAY KAYA AWAL)
+// 📝 RENDER FEED
 // ============================================================
 function renderFeed() {
     const list = document.getElementById('feedList');
@@ -516,7 +516,6 @@ function renderFeed() {
             const hasSoundCloud = post.soundcloud_data && post.soundcloud_data.stream_url;
             const artwork = hasSoundCloud && post.soundcloud_data.artwork ? post.soundcloud_data.artwork : null;
             
-            // TOMBOL PLAY PAKAI YANG KAYA AWAL (icon + teks "Putar")
             return `
                 <div class="post-card" data-id="${post.id}">
                     <div class="badge-type badge-song"><i class="fas fa-music"></i> Songfess PNC</div>
@@ -535,7 +534,7 @@ function renderFeed() {
                                 ${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}
                             </div>
                         </div>
-                        <button class="btn-play" data-title="${escapeHtml(post.title)}" data-artist="${escapeHtml(post.artist || '')}">
+                        <button class="btn-play" onclick="playSongFromPostId(${post.id})">
                             <i class="fas fa-play"></i> Putar
                         </button>
                     </div>
@@ -564,14 +563,6 @@ function renderFeed() {
                 await updateReactions(id, newReactions);
                 await loadPosts();
             }
-        });
-    });
-    
-    // Tombol play pake searchAndPlay (YouTube) kayak awal
-    document.querySelectorAll('.btn-play').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            searchAndPlay(btn.dataset.title, btn.dataset.artist);
         });
     });
 }

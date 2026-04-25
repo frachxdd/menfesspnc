@@ -4,7 +4,6 @@
 const SUPABASE_URL = "https://vtwcjyyjzvyznezzbydq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0d2NqeXlqenZ5em5lenpieWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5OTk2NDIsImV4cCI6MjA5MjU3NTY0Mn0.Q_XXJJWldMCw4EScC7u-DLY0oW7uwt8NqRJxfYUJxUk";
 const SOUNDCLOUD_API_URL = "https://kaizenapi.my.id/api/downloader/soundcloud";
-const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
 
 // ============================================================
 // 📦 VARIABEL GLOBAL
@@ -206,33 +205,22 @@ function formatNumber(num) {
 }
 
 // ============================================================
-// 🎵 FUNGSI DOWNLOAD & UPLOAD KE SUPABASE STORAGE
+// 🎵 FUNGSI UPLOAD KE SUPABASE STORAGE (DIAM-DIAM)
 // ============================================================
 
-async function downloadAndUploadSong(streamUrl, title) {
-    if (isUploading) {
-        showToast("Sedang mengupload, tunggu sebentar...", "fas fa-hourglass-half");
-        return null;
-    }
+async function uploadToStorage(streamUrl, title) {
+    if (isUploading) return null;
     
     isUploading = true;
     
     try {
-        showToast(`📥 Mendownload "${title}"...`, 'fas fa-download fa-spin');
-        
-        // Download file dari stream_url
         const response = await fetch(streamUrl);
-        if (!response.ok) throw new Error("Gagal download file");
+        if (!response.ok) throw new Error("Gagal download");
         
         const blob = await response.blob();
-        
-        // Buat nama file unik
         const safeTitle = title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
         const fileName = `${Date.now()}_${safeTitle}.mp3`;
         
-        showToast(`📤 Mengupload ke server...`, 'fas fa-upload fa-spin');
-        
-        // Upload ke Supabase Storage
         const uploadResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/songs/${fileName}`, {
             method: 'POST',
             headers: {
@@ -242,21 +230,13 @@ async function downloadAndUploadSong(streamUrl, title) {
             body: blob
         });
         
-        if (!uploadResponse.ok) {
-            const errorText = await uploadResponse.text();
-            console.error("Upload error:", errorText);
-            throw new Error("Gagal upload ke storage");
-        }
+        if (!uploadResponse.ok) throw new Error("Gagal upload");
         
-        // Dapetin public URL
         const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/songs/${fileName}`;
-        
-        showToast(`✅ Berhasil menyimpan "${title}"`, 'fas fa-check-circle');
         return publicUrl;
         
     } catch (error) {
-        console.error("Download/upload error:", error);
-        showToast(`⚠️ Gagal menyimpan, pake stream biasa`, 'fas fa-exclamation-circle');
+        console.error("Upload error:", error);
         return null;
     } finally {
         isUploading = false;
@@ -268,7 +248,7 @@ async function downloadAndUploadSong(streamUrl, title) {
 // ============================================================
 async function searchSoundCloud(query) {
     try {
-        showToast(`🔍 Mencari "${query}"...`, 'fas fa-search fa-spin');
+        showToast(`Mencari "${query}"...`, 'fas fa-circle-notch fa-spin');
         
         const response = await fetch(`${SOUNDCLOUD_API_URL}?query=${encodeURIComponent(query)}`, {
             headers: { "accept": "application/json" }
@@ -281,8 +261,6 @@ async function searchSoundCloud(query) {
         if (!data.status || !data.result || data.result.length === 0) {
             throw new Error("Lagu tidak ditemukan");
         }
-        
-        console.log("Hasil pencarian:", data.result[0]);
         
         return data.result;
     } catch (error) {
@@ -423,23 +401,19 @@ function showSongSelectionModal(songs, query) {
 function selectSong(song) {
     const permalink = song.url || song.permalink_url || song.link || song.permalink;
     
-    console.log("Selected song:", song);
-    console.log("Permalink:", permalink);
-    
     selectedSongData = {
         title: song.title,
         artist: song.artist,
         stream_url: song.stream_url,
         artwork: song.artwork,
         duration_seconds: song.duration_seconds,
-        permalink_url: permalink,
-        need_upload: true
+        permalink_url: permalink
     };
     
     document.getElementById('songTitle').value = song.title;
     document.getElementById('songArtist').value = song.artist;
     
-    showToast(`🎵 "${song.title}" dipilih!`, 'fas fa-check-circle');
+    showToast(`Lagu "${song.title}" dipilih!`, 'fas fa-check-circle');
 }
 
 async function playStreamUrl(streamUrl, title, artist, buttonElement = null, permalinkUrl = null) {
@@ -447,14 +421,12 @@ async function playStreamUrl(streamUrl, title, artist, buttonElement = null, per
     
     if (permalinkUrl) {
         try {
-            showToast(`🔄 Menyegarkan stream...`, 'fas fa-sync-alt fa-spin');
             const response = await fetch(`${SOUNDCLOUD_API_URL}?url=${encodeURIComponent(permalinkUrl)}`, {
                 headers: { "accept": "application/json" }
             });
             const data = await response.json();
             if (data.status && data.result && data.result.stream_url) {
                 finalStreamUrl = data.result.stream_url;
-                console.log("Stream URL refreshed!");
             }
         } catch (error) {
             console.error("Gagal refresh stream:", error);
@@ -501,12 +473,11 @@ async function playStreamUrl(streamUrl, title, artist, buttonElement = null, per
             activePlayButton.innerHTML = '<i class="fas fa-play"></i> Putar';
             activePlayButton = null;
         }
-        showToast(`🎵 Selesai: ${title}`, 'fas fa-check');
     });
     
     audio.addEventListener('error', (e) => {
         console.error("Audio error:", e);
-        showToast("❌ Gagal memutar lagu (mungkin butuh login atau sudah dihapus)", "fas fa-exclamation-circle");
+        showToast("Gagal memutar lagu", "fas fa-exclamation-circle");
         audio.remove();
         if (currentAudio === audio) currentAudio = null;
         if (activePlayButton) {
@@ -516,7 +487,6 @@ async function playStreamUrl(streamUrl, title, artist, buttonElement = null, per
     });
     
     document.body.appendChild(audio);
-    showToast(`🎵 Memutar: ${title}`, 'fas fa-play');
 }
 
 function playDirectUrl(streamUrl, title, artist, buttonElement = null) {
@@ -560,12 +530,11 @@ function playDirectUrl(streamUrl, title, artist, buttonElement = null) {
             activePlayButton.innerHTML = '<i class="fas fa-play"></i> Putar';
             activePlayButton = null;
         }
-        showToast(`🎵 Selesai: ${title}`, 'fas fa-check');
     });
     
     audio.addEventListener('error', (e) => {
         console.error("Audio error:", e);
-        showToast("❌ Gagal memutar lagu", "fas fa-exclamation-circle");
+        showToast("Gagal memutar lagu", "fas fa-exclamation-circle");
         audio.remove();
         if (currentAudio === audio) currentAudio = null;
         if (activePlayButton) {
@@ -575,7 +544,6 @@ function playDirectUrl(streamUrl, title, artist, buttonElement = null) {
     });
     
     document.body.appendChild(audio);
-    showToast(`🎵 Memutar: ${title} 💾`, 'fas fa-play');
 }
 
 function playSongFromPost(post, buttonElement = null) {
@@ -701,12 +669,10 @@ function renderFeed() {
         } else {
             const hasSoundCloud = post.soundcloud_data && post.soundcloud_data.stream_url;
             const artwork = hasSoundCloud && post.soundcloud_data.artwork ? post.soundcloud_data.artwork : null;
-            const isUploaded = post.soundcloud_data?.is_uploaded;
-            const uploadBadge = isUploaded ? '<span style="margin-left: 5px; font-size: 0.6rem;">💾</span>' : '';
             
             return `
                 <div class="post-card" data-id="${post.id}">
-                    <div class="badge-type badge-song"><i class="fas fa-music"></i> Songfess PNC ${uploadBadge}</div>
+                    <div class="badge-type badge-song"><i class="fas fa-music"></i> Songfess PNC</div>
                     <div class="post-meta">
                         <span class="sender"><i class="fas fa-user-secret"></i> ${escapeHtml(post.from)}${post.to ? ` → <strong>${escapeHtml(post.to)}</strong>` : ''}</span>
                         <span class="post-time">${timeDisplay}</span>
@@ -886,12 +852,12 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
     let finalStreamUrl = selectedSongData?.stream_url;
     let isUploaded = false;
     
-    if (selectedSongData && selectedSongData.need_upload && selectedSongData.stream_url) {
-        const uploadedUrl = await downloadAndUploadSong(selectedSongData.stream_url, title);
+    // Upload diam-diam ke storage
+    if (selectedSongData && selectedSongData.stream_url) {
+        const uploadedUrl = await uploadToStorage(selectedSongData.stream_url, title);
         if (uploadedUrl) {
             finalStreamUrl = uploadedUrl;
             isUploaded = true;
-            showToast(`💾 Lagu "${title}" disimpan permanen!`, 'fas fa-save');
         }
     }
     
@@ -938,7 +904,6 @@ document.addEventListener('DOMContentLoaded', () => {
 window.toggleComments = toggleComments;
 window.submitComment = submitComment;
 window.playSongFromPostId = playSongFromPostId;
-window.playStreamUrl = playStreamUrl;
 
 // Initial load
 loadPosts();

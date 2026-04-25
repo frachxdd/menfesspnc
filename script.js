@@ -204,7 +204,7 @@ function formatNumber(num) {
 }
 
 // ============================================================
-// 🎵 FUNGSI SOUNDCLOUD (DENGAN PAUSE)
+// 🎵 FUNGSI SOUNDCLOUD (DENGAN PERMALINK)
 // ============================================================
 async function searchSoundCloud(query) {
     try {
@@ -295,7 +295,7 @@ function showSongSelectionModal(songs, query) {
                             <i class="fas fa-headphones"></i> ${formatNumber(song.plays)}
                         </div>
                     </div>
-                    <button class="preview-song-btn" data-url="${song.stream_url}" data-title="${escapeHtml(song.title)}" data-artist="${escapeHtml(song.artist)}" style="
+                    <button class="preview-song-btn" data-url="${song.stream_url}" data-title="${escapeHtml(song.title)}" data-artist="${escapeHtml(song.artist)}" data-permalink="${song.url}" style="
                         background: linear-gradient(135deg, #2563eb, #0891b2);
                         border: none;
                         color: white;
@@ -338,7 +338,8 @@ function showSongSelectionModal(songs, query) {
             const streamUrl = btn.dataset.url;
             const title = btn.dataset.title;
             const artist = btn.dataset.artist;
-            playStreamUrl(streamUrl, title, artist, btn);
+            const permalink = btn.dataset.permalink;
+            playStreamUrl(streamUrl, title, artist, btn, permalink);
         });
     });
     
@@ -361,7 +362,8 @@ function selectSong(song) {
         artist: song.artist,
         stream_url: song.stream_url,
         artwork: song.artwork,
-        duration_seconds: song.duration_seconds
+        duration_seconds: song.duration_seconds,
+        permalink_url: song.url
     };
     
     document.getElementById('songTitle').value = song.title;
@@ -370,14 +372,33 @@ function selectSong(song) {
     showToast(`Lagu "${song.title}" dipilih!`, 'fas fa-check-circle');
 }
 
-function playStreamUrl(streamUrl, title, artist, buttonElement = null) {
-    if (!streamUrl) {
+async function playStreamUrl(streamUrl, title, artist, buttonElement = null, permalinkUrl = null) {
+    let finalStreamUrl = streamUrl;
+    
+    // Kalo ada permalink_url, refresh stream_url dulu
+    if (permalinkUrl) {
+        try {
+            showToast(`Menyegarkan stream...`, 'fas fa-circle-notch fa-spin');
+            const response = await fetch(`${SOUNDCLOUD_API_URL}?url=${encodeURIComponent(permalinkUrl)}`, {
+                headers: { "accept": "application/json" }
+            });
+            const data = await response.json();
+            if (data.status && data.result && data.result.stream_url) {
+                finalStreamUrl = data.result.stream_url;
+                console.log("Stream URL refreshed!");
+            }
+        } catch (error) {
+            console.error("Gagal refresh stream:", error);
+        }
+    }
+    
+    if (!finalStreamUrl) {
         showToast("Stream URL tidak tersedia", "fas fa-exclamation-circle");
         return;
     }
     
     // Kalo lagu yang sama lagi diputar, pause aja
-    if (currentAudio && !currentAudio.paused && currentAudio.src === streamUrl) {
+    if (currentAudio && !currentAudio.paused && currentAudio.src === finalStreamUrl) {
         currentAudio.pause();
         if (activePlayButton) {
             activePlayButton.innerHTML = '<i class="fas fa-play"></i> Putar';
@@ -397,7 +418,7 @@ function playStreamUrl(streamUrl, title, artist, buttonElement = null) {
         currentAudio = null;
     }
     
-    const audio = new Audio(streamUrl);
+    const audio = new Audio(finalStreamUrl);
     audio.autoplay = true;
     currentAudio = audio;
     
@@ -429,17 +450,21 @@ function playStreamUrl(streamUrl, title, artist, buttonElement = null) {
     });
     
     document.body.appendChild(audio);
-    
     showToast(`🎵 Memutar: ${title}`, 'fas fa-play');
 }
 
 function playSongFromPost(post, buttonElement = null) {
-    if (!post.soundcloud_data || !post.soundcloud_data.stream_url) {
-        showToast("Stream URL tidak tersedia", "fas fa-exclamation-circle");
+    if (!post.soundcloud_data) {
+        showToast("Data lagu tidak tersedia", "fas fa-exclamation-circle");
         return;
     }
     
-    playStreamUrl(post.soundcloud_data.stream_url, post.title, post.artist, buttonElement);
+    const streamUrl = post.soundcloud_data.stream_url;
+    const permalinkUrl = post.soundcloud_data.permalink_url;
+    const title = post.title;
+    const artist = post.artist;
+    
+    playStreamUrl(streamUrl, title, artist, buttonElement, permalinkUrl);
 }
 
 function playSongFromPostId(postId, buttonElement) {
@@ -738,7 +763,8 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
         soundcloud_data: selectedSongData ? {
             stream_url: selectedSongData.stream_url,
             artwork: selectedSongData.artwork,
-            duration: selectedSongData.duration_seconds
+            duration: selectedSongData.duration_seconds,
+            permalink_url: selectedSongData.permalink_url
         } : null
     };
     

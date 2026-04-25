@@ -694,6 +694,20 @@
       animation: musicPulse 1s infinite;
     }
     
+    /* Deezer Audio Player */
+    #deezerAudioPlayer {
+      position: fixed;
+      bottom: 140px;
+      right: 70px;
+      width: 240px;
+      z-index: 1001;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-radius: 30px;
+      padding: 6px 12px;
+      border: 1px solid var(--blue);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    
     button:focus, button:active,
     .btn-play:focus, .btn-play:active,
     .reaction:focus, .reaction:active,
@@ -720,6 +734,7 @@
       .music-icon { width: 45px; height: 45px; }
       .music-icon i { font-size: 1.3rem; }
       .running-text marquee { font-size: 0.7rem; }
+      #deezerAudioPlayer { width: 200px; bottom: 130px; right: 15px; }
     }
   </style>
 </head>
@@ -796,7 +811,7 @@
         <i class="fas fa-headphones" style="color:var(--cyan)"></i>
         <span>Kirim Songfess</span>
       </div>
-      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC. Klik play buat dengerin!</p>
+      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC. Klik play buat dengerin preview 30 detik dari Deezer!</p>
 
       <div class="input-field">
         <label>🎵 Judul Lagu *</label>
@@ -877,8 +892,6 @@
 // ============================================================
 const SUPABASE_URL = "https://vtwcjyyjzvyznezzbydq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0d2NqeXlqenZ5em5lenpieWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5OTk2NDIsImV4cCI6MjA5MjU3NTY0Mn0.Q_XXJJWldMCw4EScC7u-DLY0oW7uwt8NqRJxfYUJxUk";
-
-const YOUTUBE_API_KEY = "AIzaSyCTW69xlCOgtjonm_WdtWjMfoyGg29mI10";
 
 let posts = [];
 let comments = {};
@@ -1064,6 +1077,12 @@ function closePlayer() {
     musicIcon.classList.remove('hidden');
     musicPlayerCard.classList.add('hidden');
     isOpen = false;
+    // Stop Deezer audio juga
+    const audioPlayer = document.getElementById('deezerAudioPlayer');
+    if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer.style.display = 'none';
+    }
 }
 
 musicIcon.addEventListener('click', openPlayer);
@@ -1097,28 +1116,65 @@ document.addEventListener('mouseup', () => {
     musicFloat.style.cursor = '';
 });
 
-function playVideoInPlayer(videoId, title, artist) {
+// ============================================================
+// DEEZER PREVIEW PLAYER (30 DETIK, LANGSUNG DARI FRONTEND)
+// ============================================================
+function playDeezerPreview(audioUrl, title, artist) {
     const iframe = document.getElementById('musicIframe');
     const info = document.getElementById('musicInfo');
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
-    info.innerHTML = `<i class="fas fa-play"></i> ${title} ${artist ? `- ${artist}` : ''}`;
+    const musicIconElem = document.getElementById('musicIcon');
+    
+    // Matiin iframe YouTube
+    iframe.src = 'about:blank';
+    
+    // Buat atau ambil audio player
+    let audioPlayer = document.getElementById('deezerAudioPlayer');
+    if (!audioPlayer) {
+        audioPlayer = document.createElement('audio');
+        audioPlayer.id = 'deezerAudioPlayer';
+        audioPlayer.controls = true;
+        document.body.appendChild(audioPlayer);
+    }
+    
+    audioPlayer.src = audioUrl;
+    audioPlayer.play();
+    audioPlayer.style.display = 'block';
+    
+    info.innerHTML = `<i class="fas fa-headphones"></i> ${title} - ${artist} (Preview 30 detik)`;
+    
     if (!isOpen) openPlayer();
-    musicIcon.classList.add('playing');
-    showToast(`Memutar: ${title}`, 'fas fa-play');
+    musicIconElem.classList.add('playing');
+    showToast(`Memutar preview: ${title}`, 'fas fa-play');
 }
 
 async function searchAndPlay(title, artist) {
-    showToast(`Mencari "${title}"...`, 'fas fa-circle-notch fa-spin');
-    let searchQuery = `${title} ${artist || ''} official audio`;
+    if (!title) return;
+    
+    showToast(`Mencari "${title}" di Deezer...`, 'fas fa-circle-notch fa-spin');
+    
+    let searchQuery = `${title} ${artist || ''}`;
+    
     try {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(searchQuery)}&type=video&key=${YOUTUBE_API_KEY}`;
+        // PANGGIL DEEZER API LANGSUNG (GRATIS, GAK PAKE API KEY!)
+        const url = `https://api.deezer.com/search?q=${encodeURIComponent(searchQuery)}&limit=1`;
         const response = await fetch(url);
         const data = await response.json();
-        if (data.error) throw new Error(data.error.message);
-        if (!data.items || data.items.length === 0) throw new Error('Video tidak ditemukan');
-        const videoId = data.items[0].id.videoId;
-        playVideoInPlayer(videoId, title, artist);
+        
+        if (!data.data || data.data.length === 0) {
+            throw new Error('Lagu tidak ditemukan di Deezer');
+        }
+        
+        const track = data.data[0];
+        const previewUrl = track.preview; // preview 30 detik
+        
+        if (!previewUrl) {
+            throw new Error('Preview tidak tersedia untuk lagu ini');
+        }
+        
+        playDeezerPreview(previewUrl, track.title, track.artist.name);
+        
     } catch (error) {
+        console.error(error);
         showToast(`Gagal: ${error.message}`, 'fas fa-exclamation-triangle');
     }
 }

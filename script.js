@@ -102,6 +102,7 @@ async function saveComment(postId, commentText, fromUser) {
 
 async function savePost(post) {
     try {
+        console.log("Menyimpan post:", post); // Debug
         const response = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
             method: "POST",
             headers: { 
@@ -204,7 +205,7 @@ function formatNumber(num) {
 }
 
 // ============================================================
-// 🎵 FUNGSI SOUNDCLOUD (DENGAN PERMALINK)
+// 🎵 FUNGSI SOUNDCLOUD (FIX PERMALINK)
 // ============================================================
 async function searchSoundCloud(query) {
     try {
@@ -221,6 +222,8 @@ async function searchSoundCloud(query) {
         if (!data.status || !data.result || data.result.length === 0) {
             throw new Error("Lagu tidak ditemukan");
         }
+        
+        console.log("Hasil pencarian:", data.result[0]); // Debug: liat response API
         
         return data.result;
     } catch (error) {
@@ -273,7 +276,10 @@ function showSongSelectionModal(songs, query) {
             <p style="margin: 5px 0 0; font-size: 0.75rem; opacity: 0.9;">Hasil pencarian: "${query}"</p>
         </div>
         <div id="songListContainer" style="overflow-y: auto; padding: 16px;">
-            ${songs.map((song, index) => `
+            ${songs.map((song, index) => {
+                // Ambil permalink dari berbagai kemungkinan field
+                const permalink = song.url || song.permalink_url || song.link || song.permalink;
+                return `
                 <div class="song-search-item" data-index="${index}" style="
                     display: flex;
                     align-items: center;
@@ -295,7 +301,7 @@ function showSongSelectionModal(songs, query) {
                             <i class="fas fa-headphones"></i> ${formatNumber(song.plays)}
                         </div>
                     </div>
-                    <button class="preview-song-btn" data-url="${song.stream_url}" data-title="${escapeHtml(song.title)}" data-artist="${escapeHtml(song.artist)}" data-permalink="${song.url}" style="
+                    <button class="preview-song-btn" data-url="${song.stream_url}" data-title="${escapeHtml(song.title)}" data-artist="${escapeHtml(song.artist)}" data-permalink="${permalink}" style="
                         background: linear-gradient(135deg, #2563eb, #0891b2);
                         border: none;
                         color: white;
@@ -307,7 +313,7 @@ function showSongSelectionModal(songs, query) {
                         <i class="fas fa-play"></i> Preview
                     </button>
                 </div>
-            `).join('')}
+            `}).join('')}
         </div>
         <div style="padding: 12px 16px; border-top: 1px solid #dde1ef; display: flex; gap: 10px;">
             <button id="cancelSelectSong" style="flex: 1; padding: 10px; border-radius: 40px; border: 1px solid #dde1ef; background: white; cursor: pointer;">Batal</button>
@@ -357,13 +363,24 @@ function showSongSelectionModal(songs, query) {
 }
 
 function selectSong(song) {
+    // Ambil permalink dari berbagai kemungkinan field
+    const permalink = song.url || song.permalink_url || song.link || song.permalink;
+    
+    console.log("Selected song:", song); // Debug
+    console.log("Permalink yang didapat:", permalink); // Debug
+    
+    if (!permalink) {
+        console.warn("WARNING: Tidak ada permalink untuk lagu ini!");
+        showToast("Peringatan: Lagu ini mungkin tidak bisa diputar nanti", "fas fa-exclamation-triangle");
+    }
+    
     selectedSongData = {
         title: song.title,
         artist: song.artist,
         stream_url: song.stream_url,
         artwork: song.artwork,
         duration_seconds: song.duration_seconds,
-        permalink_url: song.url
+        permalink_url: permalink
     };
     
     document.getElementById('songTitle').value = song.title;
@@ -375,6 +392,8 @@ function selectSong(song) {
 async function playStreamUrl(streamUrl, title, artist, buttonElement = null, permalinkUrl = null) {
     let finalStreamUrl = streamUrl;
     
+    console.log("Playing - Permalink:", permalinkUrl); // Debug
+    
     // Kalo ada permalink_url, refresh stream_url dulu
     if (permalinkUrl) {
         try {
@@ -383,13 +402,18 @@ async function playStreamUrl(streamUrl, title, artist, buttonElement = null, per
                 headers: { "accept": "application/json" }
             });
             const data = await response.json();
+            console.log("Refresh response:", data); // Debug
             if (data.status && data.result && data.result.stream_url) {
                 finalStreamUrl = data.result.stream_url;
                 console.log("Stream URL refreshed!");
+            } else {
+                console.warn("Gagal refresh stream, pake stream_url lama");
             }
         } catch (error) {
             console.error("Gagal refresh stream:", error);
         }
+    } else {
+        console.warn("Tidak ada permalink, stream mungkin expired nanti");
     }
     
     if (!finalStreamUrl) {
@@ -440,7 +464,7 @@ async function playStreamUrl(streamUrl, title, artist, buttonElement = null, per
     
     audio.addEventListener('error', (e) => {
         console.error("Audio error:", e);
-        showToast("Gagal memutar lagu", "fas fa-exclamation-circle");
+        showToast("Gagal memutar lagu (mungkin butuh login atau sudah dihapus)", "fas fa-exclamation-circle");
         audio.remove();
         if (currentAudio === audio) currentAudio = null;
         if (activePlayButton) {
@@ -751,6 +775,9 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
     const msg = document.getElementById('songMsgReq').value.trim();
     const to = document.getElementById('songTo').value.trim();
     
+    // Debug: cek selectedSongData sebelum submit
+    console.log("Selected song data before submit:", selectedSongData);
+    
     const post = { 
         type: 'songfes', 
         from, 
@@ -767,6 +794,8 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
             permalink_url: selectedSongData.permalink_url
         } : null
     };
+    
+    console.log("Post yang akan disimpan:", post); // Debug
     
     await savePost(post);
     

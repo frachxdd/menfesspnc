@@ -72,7 +72,11 @@
       text-shadow: 0 0 15px rgba(37, 99, 235, 0.45), 0 0 30px rgba(37, 99, 235, 0.2);
     }
 
-    .tagline { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+    .tagline {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
 
     .running-text {
       background: linear-gradient(135deg, var(--blue-mid), var(--blue-light));
@@ -83,18 +87,29 @@
       border-radius: 40px;
       width: 100%;
     }
+
     .running-text marquee {
       font-size: 0.75rem;
       color: var(--blue);
       font-weight: 600;
       letter-spacing: 0.3px;
     }
-    .running-text marquee i { margin: 0 6px; }
 
-    .container { max-width: 680px; margin: 0 auto; padding: 1.2rem 1rem 80px; }
+    .running-text marquee i {
+      margin: 0 6px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 1.2rem 1rem 80px;
+    }
 
     .page { display: none; }
-    .page.active-page { display: block; animation: fadeUp 0.25s ease-out; }
+    .page.active-page {
+      display: block;
+      animation: fadeUp 0.25s ease-out;
+    }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -118,7 +133,13 @@
       color: var(--text);
       margin-bottom: 4px;
     }
-    .form-desc { font-size: 0.72rem; color: var(--muted); margin-bottom: 1.2rem; line-height: 1.4; }
+    .form-desc {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+      line-height: 1.4;
+    }
+
     .input-field { margin-bottom: 1rem; }
 
     label {
@@ -151,7 +172,12 @@
     }
     textarea { min-height: 80px; }
 
-    .char-counter { text-align: right; font-size: 0.6rem; color: #94a3b8; margin-top: 4px; }
+    .char-counter {
+      text-align: right;
+      font-size: 0.6rem;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
 
     .mood-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
     .mood-chip {
@@ -167,7 +193,12 @@
       user-select: none;
     }
     .mood-chip:hover { border-color: var(--blue-soft); color: var(--blue); }
-    .mood-chip.selected { background: var(--blue-mid); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+    .mood-chip.selected {
+      background: var(--blue-mid);
+      border-color: var(--blue);
+      color: var(--blue);
+      font-weight: 600;
+    }
 
     .toggle-anon {
       display: flex;
@@ -183,6 +214,7 @@
       transition: border-color 0.2s;
     }
     .toggle-anon:hover { border-color: var(--blue-soft); }
+
     .toggle-switch {
       width: 40px; height: 22px;
       background: #cbd5e1;
@@ -227,7 +259,12 @@
     .btn-submit:hover { box-shadow: 0 6px 24px rgba(37,99,235,0.4); transform: translateY(-1px); }
     .btn-submit:active { transform: scale(0.97); }
 
-    .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
     .feed-title {
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.1rem;
@@ -271,12 +308,28 @@
       border-radius: 99px;
       letter-spacing: 0.3px;
     }
-    .badge-song { background: #ecfeff; color: var(--cyan); border-color: #a5f3fc; }
+    .badge-song {
+      background: #ecfeff;
+      color: var(--cyan);
+      border-color: #a5f3fc;
+    }
 
-    .post-meta { display: flex; justify-content: space-between; align-items: center; margin: 6px 0 5px; }
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 6px 0 5px;
+    }
     .sender { font-size: 0.68rem; color: var(--muted); font-weight: 500; }
     .post-time { font-size: 0.6rem; color: #94a3b8; }
-    .message-text { font-size: 0.85rem; line-height: 1.5; color: var(--text); margin: 8px 0; }
+
+    .message-text {
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--text);
+      margin: 8px 0;
+    }
+
     .mood-tag {
       display: inline-block;
       background: var(--surface);
@@ -300,9 +353,15 @@
       margin: 8px 0;
       flex-wrap: wrap;
     }
-    .song-info { display: flex; align-items: center; gap: 10px; flex: 1; }
+    .song-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
     .song-icon-wrap {
-      width: 32px; height: 32px;
+      width: 32px;
+      height: 32px;
       background: linear-gradient(135deg, var(--blue), var(--cyan));
       border-radius: 8px;
       display: flex;
@@ -314,7 +373,7 @@
     }
     .song-title-text { font-weight: 700; font-size: 0.82rem; color: var(--text); }
     .song-artist-text { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
-
+    
     .btn-play {
       background: linear-gradient(135deg, var(--blue), var(--cyan));
       border: none;
@@ -330,7 +389,10 @@
       transition: all 0.15s;
       flex-shrink: 0;
     }
-    .btn-play:hover { transform: scale(1.02); box-shadow: 0 2px 8px rgba(37,99,235,0.3); }
+    .btn-play:hover {
+      transform: scale(1.02);
+      box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+    }
     .btn-play:active { transform: scale(0.98); }
 
     .reaction-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
@@ -346,9 +408,18 @@
       font-family: 'Inter', sans-serif;
     }
     .reaction:hover { border-color: var(--blue-soft); color: var(--blue); }
-    .reaction.reacted { background: var(--blue-mid); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+    .reaction.reacted {
+      background: var(--blue-mid);
+      border-color: var(--blue);
+      color: var(--blue);
+      font-weight: 600;
+    }
 
-    .comments-section { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px; }
+    .comments-section {
+      margin-top: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
     .comment-btn {
       background: none;
       border: none;
@@ -362,13 +433,43 @@
       border-radius: 20px;
       transition: all 0.15s;
     }
-    .comment-btn:hover { background: var(--surface); color: var(--blue); }
-    .comment-list { margin-top: 8px; max-height: 280px; overflow-y: auto; }
-    .comment-item { background: var(--surface); border-radius: 12px; padding: 6px 10px; margin-bottom: 6px; }
-    .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; font-size: 0.6rem; color: var(--muted); }
-    .comment-name { font-weight: 600; color: var(--blue); }
-    .comment-text { font-size: 0.75rem; color: var(--text); word-break: break-word; }
-    .comment-input-area { display: flex; gap: 8px; margin-top: 8px; }
+    .comment-btn:hover {
+      background: var(--surface);
+      color: var(--blue);
+    }
+    .comment-list {
+      margin-top: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .comment-item {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 6px 10px;
+      margin-bottom: 6px;
+    }
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+      font-size: 0.6rem;
+      color: var(--muted);
+    }
+    .comment-name {
+      font-weight: 600;
+      color: var(--blue);
+    }
+    .comment-text {
+      font-size: 0.75rem;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .comment-input-area {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
     .comment-input {
       flex: 1;
       background: var(--surface);
@@ -378,12 +479,16 @@
       font-size: 0.7rem;
       font-family: 'Inter', sans-serif;
     }
-    .comment-input:focus { outline: none; border-color: var(--blue); }
+    .comment-input:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
     .comment-submit {
       background: var(--blue);
       border: none;
       color: white;
-      width: 32px; height: 32px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
@@ -391,10 +496,17 @@
       justify-content: center;
       transition: all 0.15s;
     }
-    .comment-submit:hover { background: var(--blue-soft); transform: scale(1.02); }
+    .comment-submit:hover {
+      background: var(--blue-soft);
+      transform: scale(1.02);
+    }
     .comment-submit i { font-size: 0.75rem; }
 
-    .empty-feed { text-align: center; padding: 2rem 1rem; color: var(--muted); }
+    .empty-feed {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+    }
     .empty-feed i { font-size: 2rem; opacity: 0.4; margin-bottom: 10px; display: block; }
     .empty-feed p { font-size: 0.8rem; line-height: 1.5; }
 
@@ -416,6 +528,7 @@
       z-index: 100;
       box-shadow: 0 8px 32px rgba(37,99,235,0.12), 0 2px 8px rgba(0,0,0,0.06);
     }
+
     .nav-item {
       display: flex;
       flex-direction: column;
@@ -433,7 +546,11 @@
       font-family: 'Inter', sans-serif;
     }
     .nav-item i { font-size: 1.1rem; }
-    .nav-item.active { background: var(--blue-mid); color: var(--blue); font-weight: 700; }
+    .nav-item.active {
+      background: var(--blue-mid);
+      color: var(--blue);
+      font-weight: 700;
+    }
     .nav-item.active i { color: var(--blue); }
 
     .toast-message {
@@ -458,13 +575,24 @@
       pointer-events: none;
       white-space: nowrap;
     }
-    .toast-message.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast-message.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
 
-    /* MUSIC PLAYER */
-    .music-float { position: fixed; bottom: 80px; right: 12px; z-index: 1000; cursor: grab; }
+    /* DRAGGABLE MUSIC PLAYER */
+    .music-float {
+      position: fixed;
+      bottom: 80px;
+      right: 12px;
+      z-index: 1000;
+      cursor: grab;
+    }
     .music-float:active { cursor: grabbing; }
+    
     .music-icon {
-      width: 50px; height: 50px;
+      width: 50px;
+      height: 50px;
       background: linear-gradient(135deg, var(--blue), var(--cyan));
       border-radius: 50%;
       display: flex;
@@ -474,11 +602,14 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       transition: all 0.2s;
     }
-    .music-icon:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+    .music-icon:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
     .music-icon i { font-size: 1.5rem; color: white; }
-
+    
     .music-player-card {
-      width: 280px;
+      width: 260px;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       border-radius: 18px;
       overflow: hidden;
@@ -498,56 +629,31 @@
     .drag-icon { color: #888; font-size: 0.8rem; margin-right: 6px; }
     .player-title { font-size: 0.7rem; color: #aaa; flex: 1; }
     .player-controls { display: flex; gap: 10px; }
-    .player-controls button { background: none; border: none; color: white; cursor: pointer; font-size: 0.8rem; opacity: 0.7; transition: opacity 0.2s; }
-    .player-controls button:hover { opacity: 1; }
-
-    /* Deezer audio player area */
-    .deezer-player {
-      padding: 12px;
-      background: rgba(0,0,0,0.4);
-    }
-    .deezer-track-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .deezer-cover {
-      width: 48px; height: 48px;
-      border-radius: 8px;
-      object-fit: cover;
-      background: #333;
-      flex-shrink: 0;
-    }
-    .deezer-cover-placeholder {
-      width: 48px; height: 48px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--blue), var(--cyan));
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .player-controls button {
+      background: none;
+      border: none;
       color: white;
-      font-size: 1.2rem;
-      flex-shrink: 0;
+      cursor: pointer;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      transition: opacity 0.2s;
     }
-    .deezer-meta { flex: 1; overflow: hidden; }
-    .deezer-title { font-size: 0.78rem; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .deezer-artist { font-size: 0.65rem; color: #aaa; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .deezer-duration { font-size: 0.6rem; color: #888; margin-top: 2px; }
-
-    .audio-controls { display: flex; flex-direction: column; gap: 6px; }
-    .audio-el { width: 100%; height: 28px; }
-    audio::-webkit-media-controls-panel { background: #1e293b; }
-
-    .preview-badge {
-      text-align: center;
-      font-size: 0.58rem;
-      color: #888;
-      margin-top: 4px;
+    .player-controls button:hover { opacity: 1; }
+    
+    .iframe-wrapper {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 56.25%;
+      background: #000;
     }
-    .preview-badge a { color: #60a5fa; text-decoration: none; }
-    .preview-badge a:hover { text-decoration: underline; }
-
+    .iframe-wrapper iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+    
     .player-info {
       padding: 6px 10px;
       background: rgba(0,0,0,0.7);
@@ -557,15 +663,15 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
+    
     .hidden { display: none; }
-
+    
     @keyframes musicPulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.05); }
     }
     .music-icon.playing { animation: musicPulse 1s infinite; }
-
+    
     button:focus, button:active,
     .btn-play:focus, .btn-play:active,
     .reaction:focus, .reaction:active,
@@ -580,7 +686,7 @@
       -webkit-tap-highlight-color: transparent !important;
       box-shadow: none !important;
     }
-
+    
     @media (max-width: 480px) {
       .glass-card { padding: 1rem; }
       .nav-item span { display: none; }
@@ -588,7 +694,7 @@
       .nav-item i { font-size: 1.2rem; }
       .song-preview { flex-direction: column; align-items: stretch; }
       .btn-play { justify-content: center; margin-top: 5px; }
-      .music-player-card { width: 260px; }
+      .music-player-card { width: 240px; }
       .music-icon { width: 45px; height: 45px; }
       .music-icon i { font-size: 1.3rem; }
       .running-text marquee { font-size: 0.7rem; }
@@ -603,20 +709,19 @@
   </div>
   <h1>Menfess PNC</h1>
   <p class="tagline">seru seruan aja yagesyaaa</p>
+  
   <div class="running-text">
     <marquee behavior="scroll" direction="left" scrollamount="4" loop="-1">
       <i class="fas fa-exclamation-triangle"></i> Mohon gunakan dengan bijak dan utamakan kesopanan 
       <i class="fas fa-circle" style="font-size: 3px; vertical-align: middle;"></i> Jaga privasi orang lain 
       <i class="fas fa-circle" style="font-size: 3px; vertical-align: middle;"></i> Tidak menyakiti 
-      <i class="fas fa-circle" style="font-size: 3px; vertical-align: middle;"></i> Think before you type
-      <i class="fas fa-circle" style="font-size: 3px; vertical-align: middle;"></i> Credit: @rchmddf
+      <i class="fas fa-circle" style="font-size: 3px; vertical-align: middle;"></i> Think before you type <i class="fas fa-circle" style="font-size: 3px; vertical-align: middle;"></i> Credit: @rchmddf
       <i class="fas fa-heart" style="color: #db2777;"></i>
     </marquee>
   </div>
 </div>
 
 <div class="container">
-  <!-- MENFESS PAGE -->
   <div id="menfessPage" class="page">
     <div class="glass-card">
       <div class="form-header">
@@ -624,6 +729,7 @@
         <span>Kirim Menfess</span>
       </div>
       <p class="form-desc">Curhat, ucapan terima kasih, atau perasaanmu ke seseorang di PNC — anonim & aman.</p>
+
       <div class="input-field">
         <label>📌 Kepada (opsional)</label>
         <input type="text" id="menfTo" placeholder="nama / inisial / kating..." maxlength="50" />
@@ -645,6 +751,7 @@
           <span class="mood-chip" data-mood="🎉 Semangat">🎉 Semangat</span>
         </div>
       </div>
+
       <div class="toggle-anon on" id="menfAnonToggle">
         <div class="toggle-switch"></div>
         <span class="toggle-label">Kirim secara anonim</span>
@@ -653,20 +760,21 @@
         <label>Nama kamu</label>
         <input type="text" id="menfName" placeholder="nama panggilan / alias" maxlength="40" />
       </div>
+
       <button class="btn-submit" id="submitMenfess">
         <i class="fas fa-paper-plane"></i> Bisikkan Sekarang
       </button>
     </div>
   </div>
 
-  <!-- SONGFESS PAGE -->
   <div id="songfesPage" class="page">
     <div class="glass-card">
       <div class="form-header">
         <i class="fas fa-headphones" style="color:var(--cyan)"></i>
         <span>Kirim Songfess</span>
       </div>
-      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC. Klik play buat dengerin preview!</p>
+      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC. Klik play buat dengerin!</p>
+
       <div class="input-field">
         <label>🎵 Judul Lagu *</label>
         <input type="text" id="songTitle" placeholder="contoh: Hati-Hati di Jalan" maxlength="80" />
@@ -684,6 +792,7 @@
         <label>🎯 Untuk siapa</label>
         <input type="text" id="songTo" placeholder="nama / angkatan / umum" maxlength="50" />
       </div>
+
       <div class="toggle-anon on" id="songAnonToggle">
         <div class="toggle-switch"></div>
         <span class="toggle-label">Kirim secara anonim</span>
@@ -692,13 +801,13 @@
         <label>Nama kamu</label>
         <input type="text" id="songName" placeholder="nama / alias" maxlength="40" />
       </div>
+
       <button class="btn-submit" id="submitSongfes">
         <i class="fas fa-music"></i> Kirim Request
       </button>
     </div>
   </div>
 
-  <!-- FEED PAGE -->
   <div id="feedPage" class="page">
     <div class="feed-header">
       <div class="feed-title">
@@ -716,16 +825,14 @@
   <button class="nav-item" data-nav="feed"><i class="fas fa-list-ul"></i><span>Feed</span></button>
 </nav>
 
-<div id="globalToast" class="toast-message">
-  <i class="fas fa-check-circle" style="color:var(--blue)"></i>
-  <span id="toastText"></span>
-</div>
+<div id="globalToast" class="toast-message"><i class="fas fa-check-circle" style="color:var(--blue)"></i><span id="toastText"></span></div>
 
 <!-- DRAGGABLE MUSIC PLAYER -->
 <div id="musicFloat" class="music-float">
   <div id="musicIcon" class="music-icon">
     <i class="fas fa-music"></i>
   </div>
+  
   <div id="musicPlayerCard" class="music-player-card hidden">
     <div class="player-header" id="dragHandle">
       <i class="fas fa-grip-vertical drag-icon"></i>
@@ -734,36 +841,30 @@
         <button id="closePlayerBtn"><i class="fas fa-compress"></i></button>
       </div>
     </div>
-    <div class="deezer-player">
-      <div class="deezer-track-info">
-        <div class="deezer-cover-placeholder" id="coverPlaceholder"><i class="fas fa-music"></i></div>
-        <img id="deezerCover" class="deezer-cover hidden" src="" alt="cover" />
-        <div class="deezer-meta">
-          <div class="deezer-title" id="deezerTitle">Belum ada lagu</div>
-          <div class="deezer-artist" id="deezerArtist">—</div>
-          <div class="deezer-duration" id="deezerDuration"></div>
-        </div>
-      </div>
-      <div class="audio-controls">
-        <audio id="audioEl" class="audio-el" controls></audio>
-      </div>
-      <div class="preview-badge">
-        Preview 30 detik via Deezer •
-        <a id="deezerLink" href="#" target="_blank" rel="noopener">Buka full di Deezer</a>
-      </div>
+    <div class="iframe-wrapper">
+      <iframe id="musicIframe" allow="autoplay"></iframe>
     </div>
+    <div class="player-info" id="musicInfo">Belum ada lagu diputar</div>
   </div>
 </div>
 
 <script>
 // ============================================================
-// CONFIG
+// 🔑 SUPABASE CONFIG
 // ============================================================
 const SUPABASE_URL = "https://vtwcjyyjzvyznezzbydq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0d2NqeXlqenZ5em5lenpieWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5OTk2NDIsImV4cCI6MjA5MjU3NTY0Mn0.Q_XXJJWldMCw4EScC7u-DLY0oW7uwt8NqRJxfYUJxUk";
 
-// Ganti ke URL server kamu kalau deploy (misal: https://namadomain.com)
-const BACKEND_URL = "http://localhost:3000";
+// ============================================================
+// 🎵 INVIDIOUS CONFIG — tanpa API key, tanpa limit quota
+// Fallback otomatis ke server berikutnya kalau ada yang down
+// ============================================================
+const INVIDIOUS_SERVERS = [
+  'https://invidious.io.lol',
+  'https://inv.nadeko.net',
+  'https://invidious.nerdvpn.de',
+  'https://invidious.privacydev.net',
+];
 
 let posts = [];
 let comments = {};
@@ -776,75 +877,83 @@ let isOpen = false;
 let openCommentPostId = null;
 
 // ============================================================
-// SUPABASE
+// SUPABASE FUNCTIONS
 // ============================================================
 async function loadPosts() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/posts?select=*&order=created_at.desc`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/posts?select=*&order=created_at.desc`, {
       headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` }
     });
-    if (!res.ok) throw new Error("Gagal load data");
-    posts = await res.json();
+    if (!response.ok) throw new Error("Gagal load data");
+    const data = await response.json();
+    posts = data;
     await loadAllComments();
     renderFeed();
     updateFeedCount();
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
     showToast("Gagal load data", "fas fa-exclamation-circle");
   }
 }
 
 async function loadAllComments() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.asc`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.asc`, {
       headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` }
     });
-    if (!res.ok) throw new Error();
-    const data = await res.json();
+    if (!response.ok) throw new Error("Gagal load comments");
+    const data = await response.json();
     comments = {};
-    data.forEach(c => {
-      if (!comments[c.post_id]) comments[c.post_id] = [];
-      comments[c.post_id].push(c);
+    data.forEach(comment => {
+      if (!comments[comment.post_id]) comments[comment.post_id] = [];
+      comments[comment.post_id].push(comment);
     });
-  } catch (e) { console.error(e); }
-}
-
-async function savePost(post) {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` },
-      body: JSON.stringify({ ...post, comment_count: 0 })
-    });
-    if (!res.ok) throw new Error();
-    showToast("Berhasil disimpan!", "fas fa-check-circle");
-    await loadPosts();
-    return true;
-  } catch (e) {
-    showToast("Gagal menyimpan", "fas fa-exclamation-circle");
-    return false;
+  } catch (error) {
+    console.error(error);
   }
 }
 
 async function saveComment(postId, commentText, fromUser) {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` },
       body: JSON.stringify({ post_id: postId, comment: commentText, from_user: fromUser })
     });
-    if (!res.ok) throw new Error();
+    if (!response.ok) throw new Error("Gagal simpan komentar");
+    
     const currentCount = posts.find(p => p.id === postId)?.comment_count || 0;
     await fetch(`${SUPABASE_URL}/rest/v1/posts?id=eq.${postId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` },
       body: JSON.stringify({ comment_count: currentCount + 1 })
     });
+    
     showToast("Komentar terkirim!", "fas fa-check-circle");
-    openCommentPostId = postId;
     await loadPosts();
-  } catch (e) {
+    return true;
+  } catch (error) {
+    console.error(error);
     showToast("Gagal kirim komentar", "fas fa-exclamation-circle");
+    return false;
+  }
+}
+
+async function savePost(post) {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` },
+      body: JSON.stringify({ ...post, comment_count: 0 })
+    });
+    if (!response.ok) throw new Error("Gagal simpan");
+    showToast("Berhasil disimpan!", "fas fa-check-circle");
+    await loadPosts();
+    return true;
+  } catch (error) {
+    console.error(error);
+    showToast("Gagal menyimpan", "fas fa-exclamation-circle");
+    return false;
   }
 }
 
@@ -853,101 +962,59 @@ async function updateReactions(id, reactions) {
     await fetch(`${SUPABASE_URL}/rest/v1/posts?id=eq.${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` },
-      body: JSON.stringify({ reactions })
+      body: JSON.stringify({ reactions: reactions })
     });
-  } catch (e) { console.error(e); }
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
 
 // ============================================================
-// 🎵 DEEZER SEARCH via backend proxy
+// 🎵 MUSIC SEARCH — INVIDIOUS (tanpa API key, tanpa limit!)
 // ============================================================
 async function searchAndPlay(title, artist) {
   showToast(`Mencari "${title}"...`, 'fas fa-circle-notch fa-spin');
-  const q = `${title} ${artist || ''}`.trim();
+  const searchQuery = `${title} ${artist || ''} official audio`.trim();
 
-  try {
-    const res = await fetch(`${BACKEND_URL}/api/search?q=${encodeURIComponent(q)}`);
-    if (!res.ok) throw new Error('Backend error');
-    const data = await res.json();
-
-    if (!data.data || data.data.length === 0) {
-      showToast('Lagu tidak ditemukan di Deezer', 'fas fa-exclamation-triangle');
-      return;
+  for (const server of INVIDIOUS_SERVERS) {
+    try {
+      const url = `${server}/api/v1/search?q=${encodeURIComponent(searchQuery)}&type=video`;
+      const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      if (!response.ok) continue;
+      const data = await response.json();
+      if (!Array.isArray(data) || data.length === 0) continue;
+      const videoId = data[0].videoId;
+      if (!videoId) continue;
+      playVideoInPlayer(videoId, title, artist);
+      return; // sukses, stop loop
+    } catch (err) {
+      console.warn(`Server ${server} gagal, coba berikutnya...`, err.message);
     }
-
-    const track = data.data[0];
-    playDeezerTrack(track);
-  } catch (err) {
-    console.error(err);
-    showToast('Gagal mencari lagu, cek koneksi backend!', 'fas fa-exclamation-triangle');
-  }
-}
-
-function playDeezerTrack(track) {
-  const audio = document.getElementById('audioEl');
-  const titleEl = document.getElementById('deezerTitle');
-  const artistEl = document.getElementById('deezerArtist');
-  const durationEl = document.getElementById('deezerDuration');
-  const coverImg = document.getElementById('deezerCover');
-  const coverPlaceholder = document.getElementById('coverPlaceholder');
-  const linkEl = document.getElementById('deezerLink');
-
-  // Set info
-  titleEl.textContent = track.title || 'Unknown';
-  artistEl.textContent = track.artist?.name || '—';
-  const dur = track.duration ? `${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}` : '';
-  durationEl.textContent = dur ? `Durasi: ${dur} • Preview 30 detik` : 'Preview 30 detik';
-  linkEl.href = track.link || '#';
-
-  // Cover art
-  if (track.album?.cover_medium) {
-    coverImg.src = track.album.cover_medium;
-    coverImg.classList.remove('hidden');
-    coverPlaceholder.classList.add('hidden');
-  } else {
-    coverImg.classList.add('hidden');
-    coverPlaceholder.classList.remove('hidden');
   }
 
-  // Play preview
-  if (track.preview) {
-    audio.src = track.preview;
-    audio.play().catch(() => {});
-  } else {
-    showToast('Preview tidak tersedia, buka di Deezer', 'fas fa-info-circle');
-  }
-
-  if (!isOpen) openPlayer();
-  document.getElementById('musicIcon').classList.add('playing');
-  showToast(`Memutar: ${track.title}`, 'fas fa-play');
+  // Semua server gagal — fallback ke YouTube embed langsung pakai query
+  showToast('Server sibuk, coba lagi!', 'fas fa-exclamation-triangle');
 }
 
 // ============================================================
-// HELPER
+// HELPER FUNCTIONS
 // ============================================================
 function formatTime(createdAt) {
   if (!createdAt) return "Baru saja";
   const date = new Date(createdAt);
-  const diff = Math.floor((new Date() - date) / 1000);
+  const now = new Date();
+  const diff = Math.floor((now - date) / 1000);
   if (diff < 60) return `${diff} detik lalu`;
   if (diff < 3600) return `${Math.floor(diff / 60)} menit lalu`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} jam lalu`;
   return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-}
-
-let toastTimer;
-function showToast(msg, icon = 'fas fa-check-circle') {
-  const toast = document.getElementById('globalToast');
-  toast.querySelector('i').className = icon;
-  document.getElementById('toastText').textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+function escapeHtml(str) { 
+  if (!str) return ''; 
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); 
 }
 
 function navigateTo(page) {
@@ -961,16 +1028,18 @@ function navigateTo(page) {
 
 document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.nav)));
 
-function initToggle(toggleId, nameWrapId, getState, setState) {
-  document.getElementById(toggleId).addEventListener('click', () => {
-    const next = !getState();
-    setState(next);
-    document.getElementById(toggleId).classList.toggle('on', next);
-    document.getElementById(nameWrapId).style.display = next ? 'none' : 'block';
+function initToggle(toggleId, nameWrapId, stateRef, setStateFn) {
+  const toggle = document.getElementById(toggleId);
+  toggle.addEventListener('click', () => {
+    const newState = !stateRef();
+    setStateFn(newState);
+    toggle.classList.toggle('on', newState);
+    document.getElementById(nameWrapId).style.display = newState ? 'none' : 'block';
   });
 }
-initToggle('menfAnonToggle', 'menfNameWrap', () => menfAnonState, v => menfAnonState = v);
-initToggle('songAnonToggle', 'songNameWrap', () => songAnonState, v => songAnonState = v);
+
+initToggle('menfAnonToggle', 'menfNameWrap', () => menfAnonState, (v) => menfAnonState = v);
+initToggle('songAnonToggle', 'songNameWrap', () => songAnonState, (v) => songAnonState = v);
 
 document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -985,11 +1054,23 @@ function setupCounter(inputId, counterId, max) {
   const out = document.getElementById(counterId);
   el.addEventListener('input', () => out.textContent = `${el.value.length}/${max}`);
 }
+
 setupCounter('menfMsg', 'menfChar', 500);
 setupCounter('songMsgReq', 'songMsgChar', 280);
 
+let toastTimer;
+function showToast(msg, icon = 'fas fa-check-circle') {
+  const toast = document.getElementById('globalToast');
+  const iconEl = toast.querySelector('i');
+  iconEl.className = icon;
+  document.getElementById('toastText').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
 // ============================================================
-// MUSIC PLAYER DRAGGABLE
+// MUSIC PLAYER — DRAGGABLE
 // ============================================================
 const musicFloat = document.getElementById('musicFloat');
 const musicIcon = document.getElementById('musicIcon');
@@ -1000,6 +1081,7 @@ function openPlayer() {
   musicPlayerCard.classList.remove('hidden');
   isOpen = true;
 }
+
 function closePlayer() {
   musicIcon.classList.remove('hidden');
   musicPlayerCard.classList.add('hidden');
@@ -1007,40 +1089,57 @@ function closePlayer() {
 }
 
 musicIcon.addEventListener('click', openPlayer);
-document.getElementById('closePlayerBtn').addEventListener('click', () => {
-  document.getElementById('audioEl').pause();
-  musicIcon.classList.remove('playing');
-  closePlayer();
-});
+document.getElementById('closePlayerBtn').addEventListener('click', closePlayer);
 
-musicFloat.addEventListener('mousedown', e => {
-  if (e.target.closest('.player-controls') || e.target.closest('audio')) return;
+musicFloat.addEventListener('mousedown', (e) => {
+  if (e.target.closest('.player-controls')) return;
+  if (e.target.closest('#closePlayerBtn')) return;
   isDragging = true;
   const rect = musicFloat.getBoundingClientRect();
   dragStartX = e.clientX - rect.left;
   dragStartY = e.clientY - rect.top;
+  musicFloat.style.cursor = 'grabbing';
   e.preventDefault();
 });
-document.addEventListener('mousemove', e => {
+
+document.addEventListener('mousemove', (e) => {
   if (!isDragging) return;
-  let l = Math.max(0, Math.min(e.clientX - dragStartX, window.innerWidth - musicFloat.offsetWidth));
-  let t = Math.max(0, Math.min(e.clientY - dragStartY, window.innerHeight - musicFloat.offsetHeight));
-  musicFloat.style.left = l + 'px';
-  musicFloat.style.top = t + 'px';
+  let newLeft = e.clientX - dragStartX;
+  let newTop = e.clientY - dragStartY;
+  newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - musicFloat.offsetWidth));
+  newTop = Math.max(0, Math.min(newTop, window.innerHeight - musicFloat.offsetHeight));
+  musicFloat.style.left = newLeft + 'px';
   musicFloat.style.right = 'auto';
   musicFloat.style.bottom = 'auto';
+  musicFloat.style.top = newTop + 'px';
 });
-document.addEventListener('mouseup', () => isDragging = false);
+
+document.addEventListener('mouseup', () => {
+  isDragging = false;
+  musicFloat.style.cursor = '';
+});
+
+function playVideoInPlayer(videoId, title, artist) {
+  const iframe = document.getElementById('musicIframe');
+  const info = document.getElementById('musicInfo');
+  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+  info.innerHTML = `<i class="fas fa-play"></i> ${title}${artist ? ` - ${artist}` : ''}`;
+  if (!isOpen) openPlayer();
+  musicIcon.classList.add('playing');
+  showToast(`Memutar: ${title}`, 'fas fa-play');
+}
 
 // ============================================================
-// SUBMIT
+// SUBMIT HANDLERS
 // ============================================================
 document.getElementById('submitMenfess').addEventListener('click', async () => {
   const msg = document.getElementById('menfMsg').value.trim();
   if (!msg) { showToast('Pesan tidak boleh kosong!', 'fas fa-exclamation-circle'); return; }
   const from = menfAnonState ? 'Anonim' : (document.getElementById('menfName').value.trim() || 'Anonim');
   const to = document.getElementById('menfTo').value.trim();
-  await savePost({ type: 'menfes', from, to: to || null, msg, mood: currentMoodMenf || null, title: null, artist: null, reactions: { '❤️': 0, '💬': 0, '🎧': 0 } });
+  const mood = currentMoodMenf || '';
+  const post = { type: 'menfes', from, to: to || null, msg, mood: mood || null, title: null, artist: null, reactions: { '❤️': 0, '💬': 0, '🎧': 0 } };
+  await savePost(post);
   document.getElementById('menfMsg').value = '';
   document.getElementById('menfTo').value = '';
   document.getElementById('menfChar').textContent = '0/500';
@@ -1056,13 +1155,18 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
   const artist = document.getElementById('songArtist').value.trim();
   const msg = document.getElementById('songMsgReq').value.trim();
   const to = document.getElementById('songTo').value.trim();
-  await savePost({ type: 'songfes', from, to: to || null, msg: msg || null, mood: null, title, artist: artist || null, reactions: { '❤️': 0, '💬': 0, '🎧': 0 } });
-  ['songTitle','songArtist','songMsgReq','songTo','songName'].forEach(id => document.getElementById(id).value = '');
+  const post = { type: 'songfes', from, to: to || null, msg: msg || null, mood: null, title, artist: artist || null, reactions: { '❤️': 0, '💬': 0, '🎧': 0 } };
+  await savePost(post);
+  document.getElementById('songTitle').value = '';
+  document.getElementById('songArtist').value = '';
+  document.getElementById('songMsgReq').value = '';
+  document.getElementById('songTo').value = '';
   document.getElementById('songMsgChar').textContent = '0/280';
+  document.getElementById('songName').value = '';
 });
 
 // ============================================================
-// FEED
+// FEED RENDER
 // ============================================================
 function updateFeedCount() {
   document.getElementById('feedCountBadge').textContent = posts.length + ' postingan';
@@ -1070,28 +1174,21 @@ function updateFeedCount() {
 
 function renderCommentSection(postId, commentCount) {
   const postComments = comments[postId] || [];
-  const open = openCommentPostId === postId;
-  return `<div class="comments-section">
-    <button class="comment-btn" onclick="toggleComments(${postId})">
-      <i class="fas fa-comment"></i> Komentar (${commentCount || 0})
-    </button>
-    ${open ? `
+  const isOpenComment = openCommentPostId === postId;
+  let commentsHtml = '';
+  if (isOpenComment) {
+    commentsHtml = `
       <div class="comment-list">
-        ${postComments.length === 0 ? '<div style="text-align:center;padding:12px;color:var(--muted);font-size:0.7rem;">Belum ada komentar. Jadi yang pertama!</div>' : ''}
-        ${postComments.map(c => `
-          <div class="comment-item">
-            <div class="comment-header">
-              <span class="comment-name">${escapeHtml(c.from_user)}</span>
-              <span>${formatTime(c.created_at)}</span>
-            </div>
-            <div class="comment-text">${escapeHtml(c.comment)}</div>
-          </div>`).join('')}
+        ${postComments.map(c => `<div class="comment-item"><div class="comment-header"><span class="comment-name">${escapeHtml(c.from_user)}</span><span>${formatTime(c.created_at)}</span></div><div class="comment-text">${escapeHtml(c.comment)}</div></div>`).join('')}
+        ${postComments.length === 0 ? '<div style="text-align:center; padding:12px; color:var(--muted); font-size:0.7rem;">Belum ada komentar. Jadi yang pertama!</div>' : ''}
       </div>
       <div class="comment-input-area">
         <input type="text" class="comment-input" id="commentInput_${postId}" placeholder="Tulis komentar anonim...">
         <button class="comment-submit" onclick="submitComment(${postId})"><i class="fas fa-paper-plane"></i></button>
-      </div>` : ''}
-  </div>`;
+      </div>
+    `;
+  }
+  return `<div class="comments-section"><button class="comment-btn" onclick="toggleComments(${postId})"><i class="fas fa-comment"></i> Komentar (${commentCount || 0})</button>${commentsHtml}</div>`;
 }
 
 function toggleComments(postId) {
@@ -1101,9 +1198,12 @@ function toggleComments(postId) {
 
 async function submitComment(postId) {
   const input = document.getElementById(`commentInput_${postId}`);
-  const text = input.value.trim();
-  if (!text) { showToast("Tulis komentar dulu!", "fas fa-exclamation-circle"); return; }
-  await saveComment(postId, text, "Anonim");
+  const commentText = input.value.trim();
+  if (!commentText) { showToast("Tulis komentar dulu!", "fas fa-exclamation-circle"); return; }
+  await saveComment(postId, commentText, "Anonim");
+  input.value = '';
+  openCommentPostId = postId;
+  await loadPosts();
 }
 
 function renderFeed() {
@@ -1113,66 +1213,49 @@ function renderFeed() {
     list.innerHTML = '<div class="empty-feed"><i class="fas fa-inbox"></i><p>Belum ada suara.<br>Yuk kirim menfess atau request lagu pertama!</p></div>';
     return;
   }
-  list.innerHTML = posts.map(post => {
+  list.innerHTML = posts.map((post) => {
     const reacts = post.reactions || { '❤️': 0, '💬': 0, '🎧': 0 };
-    const time = formatTime(post.created_at);
-    const count = post.comment_count || 0;
-    const senderHtml = `<i class="fas fa-user-secret"></i> ${escapeHtml(post.from)}${post.to ? ` → <strong>${escapeHtml(post.to)}</strong>` : ''}`;
-    const reactionHtml = `<div class="reaction-row">
-      <button class="reaction" data-emoji="❤️">❤️ ${reacts['❤️']||0}</button>
-      <button class="reaction" data-emoji="💬">💬 ${reacts['💬']||0}</button>
-      <button class="reaction" data-emoji="🎧">🎧 ${reacts['🎧']||0}</button>
-    </div>`;
-
+    const timeDisplay = formatTime(post.created_at);
+    const commentCount = post.comment_count || 0;
     if (post.type === 'menfes') {
       return `<div class="post-card" data-id="${post.id}">
         <div class="badge-type"><i class="fas fa-envelope"></i> Menfess PNC</div>
-        <div class="post-meta"><span class="sender">${senderHtml}</span><span class="post-time">${time}</span></div>
+        <div class="post-meta"><span class="sender"><i class="fas fa-user-secret"></i> ${escapeHtml(post.from)}${post.to ? ` → <strong>${escapeHtml(post.to)}</strong>` : ''}</span><span class="post-time">${timeDisplay}</span></div>
         <div class="message-text">${escapeHtml(post.msg)}</div>
         ${post.mood ? `<div><span class="mood-tag">${post.mood}</span></div>` : ''}
-        ${reactionHtml}
-        ${renderCommentSection(post.id, count)}
+        <div class="reaction-row"><button class="reaction" data-emoji="❤️">❤️ ${reacts['❤️'] || 0}</button><button class="reaction" data-emoji="💬">💬 ${reacts['💬'] || 0}</button><button class="reaction" data-emoji="🎧">🎧 ${reacts['🎧'] || 0}</button></div>
+        ${renderCommentSection(post.id, commentCount)}
       </div>`;
     } else {
       return `<div class="post-card" data-id="${post.id}">
         <div class="badge-type badge-song"><i class="fas fa-music"></i> Songfess PNC</div>
-        <div class="post-meta"><span class="sender">${senderHtml}</span><span class="post-time">${time}</span></div>
-        <div class="song-preview">
-          <div class="song-info">
-            <div class="song-icon-wrap"><i class="fas fa-music"></i></div>
-            <div>
-              <div class="song-title-text">${escapeHtml(post.title)}</div>
-              ${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}
-            </div>
-          </div>
-          <button class="btn-play" data-title="${escapeHtml(post.title)}" data-artist="${escapeHtml(post.artist||'')}">
-            <i class="fas fa-play"></i> Putar
-          </button>
-        </div>
-        ${post.msg ? `<div class="message-text" style="font-size:0.8rem;color:var(--muted);">"${escapeHtml(post.msg)}"</div>` : ''}
-        ${reactionHtml}
-        ${renderCommentSection(post.id, count)}
+        <div class="post-meta"><span class="sender"><i class="fas fa-user-secret"></i> ${escapeHtml(post.from)}${post.to ? ` → <strong>${escapeHtml(post.to)}</strong>` : ''}</span><span class="post-time">${timeDisplay}</span></div>
+        <div class="song-preview"><div class="song-info"><div class="song-icon-wrap"><i class="fas fa-music"></i></div><div><div class="song-title-text">${escapeHtml(post.title)}</div>${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}</div></div><button class="btn-play" data-title="${escapeHtml(post.title)}" data-artist="${escapeHtml(post.artist || '')}"><i class="fas fa-play"></i> Putar</button></div>
+        ${post.msg ? `<div class="message-text" style="font-size:0.8rem; color:var(--muted);">"${escapeHtml(post.msg)}"</div>` : ''}
+        <div class="reaction-row"><button class="reaction" data-emoji="❤️">❤️ ${reacts['❤️'] || 0}</button><button class="reaction" data-emoji="💬">💬 ${reacts['💬'] || 0}</button><button class="reaction" data-emoji="🎧">🎧 ${reacts['🎧'] || 0}</button></div>
+        ${renderCommentSection(post.id, commentCount)}
       </div>`;
     }
   }).join('');
-
+  
   document.querySelectorAll('.reaction').forEach(btn => {
-    btn.addEventListener('click', async e => {
+    btn.addEventListener('click', async (e) => {
       e.stopPropagation();
-      const id = parseInt(btn.closest('.post-card').dataset.id);
+      const card = btn.closest('.post-card');
+      const id = parseInt(card.dataset.id);
       const emoji = btn.dataset.emoji;
       const post = posts.find(p => p.id === id);
       if (post) {
-        const newR = { ...post.reactions };
-        newR[emoji] = (newR[emoji] || 0) + 1;
-        await updateReactions(id, newR);
+        const newReactions = { ...post.reactions };
+        newReactions[emoji] = (newReactions[emoji] || 0) + 1;
+        await updateReactions(id, newReactions);
         await loadPosts();
       }
     });
   });
-
+  
   document.querySelectorAll('.btn-play').forEach(btn => {
-    btn.addEventListener('click', e => {
+    btn.addEventListener('click', (e) => {
       e.stopPropagation();
       searchAndPlay(btn.dataset.title, btn.dataset.artist);
     });

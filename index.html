@@ -81,7 +81,7 @@
         <i class="fas fa-headphones" style="color:var(--cyan)"></i>
         <span>Kirim Songfess</span>
       </div>
-      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC.</p>
+      <p class="form-desc">Minta lagu favoritmu + pesan khusus buat warga PNC. Klik play buat dengerin!</p>
 
       <div class="input-field">
         <label>🎵 Judul Lagu *</label>
@@ -134,6 +134,25 @@
 </nav>
 
 <div id="globalToast" class="toast-message"><i class="fas fa-check-circle" style="color:var(--blue)"></i><span id="toastText"></span></div>
+
+<div id="musicFloat" class="music-float">
+  <div id="musicIcon" class="music-icon">
+    <i class="fas fa-music"></i>
+  </div>
+  <div id="musicPlayerCard" class="music-player-card hidden">
+    <div class="player-header" id="dragHandle">
+      <i class="fas fa-grip-vertical drag-icon"></i>
+      <span class="player-title"><i class="fas fa-headphones"></i> Music Player</span>
+      <div class="player-controls">
+        <button id="closePlayerBtn"><i class="fas fa-compress"></i></button>
+      </div>
+    </div>
+    <div class="iframe-wrapper">
+      <iframe id="musicIframe" allow="autoplay"></iframe>
+    </div>
+    <div class="player-info" id="musicInfo">Belum ada lagu diputar</div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>

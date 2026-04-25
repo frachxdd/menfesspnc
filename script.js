@@ -1,9 +1,10 @@
 // ============================================================
-// 🔑 SUPABASE CONFIGURATION
+// 🔑 SUPABASE & API CONFIGURATION
 // ============================================================
 const SUPABASE_URL = "https://vtwcjyyjzvyznezzbydq.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0d2NqeXlqenZ5em5lenpieWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5OTk2NDIsImV4cCI6MjA5MjU3NTY0Mn0.Q_XXJJWldMCw4EScC7u-DLY0oW7uwt8NqRJxfYUJxUk";
 const YOUTUBE_API_KEY = "AIzaSyCTW69xlCOgtjonm_WdtWjMfoyGg29mI10";
+const SOUNDCLOUD_API_URL = "https://kaizenapi.my.id/api/downloader/soundcloud";
 
 // ============================================================
 // 📦 GLOBAL VARIABLES
@@ -18,6 +19,7 @@ let dragStartX = 0, dragStartY = 0;
 let isOpen = false;
 let openCommentPostId = null;
 let toastTimer;
+let selectedSongData = null;
 
 // ============================================================
 // 📡 DATABASE FUNCTIONS
@@ -185,6 +187,284 @@ function updateFeedCount() {
     document.getElementById('feedCountBadge').textContent = posts.length + ' postingan';
 }
 
+function formatDuration(seconds) {
+    if (!seconds) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatNumber(num) {
+    if (!num) return '0';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+}
+
+// ============================================================
+// 🎵 SOUNDCLOUD FUNCTIONS
+// ============================================================
+async function searchSoundCloud(query) {
+    try {
+        showToast(`Mencari "${query}" di SoundCloud...`, 'fas fa-circle-notch fa-spin');
+        
+        const response = await fetch(`${SOUNDCLOUD_API_URL}?query=${encodeURIComponent(query)}`, {
+            headers: { "accept": "application/json" }
+        });
+        
+        if (!response.ok) throw new Error("Gagal mencari lagu");
+        
+        const data = await response.json();
+        
+        if (!data.status || !data.result || data.result.length === 0) {
+            throw new Error("Lagu tidak ditemukan");
+        }
+        
+        return data.result;
+    } catch (error) {
+        console.error(error);
+        showToast(`Gagal mencari: ${error.message}`, 'fas fa-exclamation-circle');
+        return [];
+    }
+}
+
+function showSongSelectionModal(songs, query) {
+    const modal = document.createElement('div');
+    modal.id = 'songSelectionModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(8px);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: fadeIn 0.2s ease;
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        max-width: 500px;
+        width: 100%;
+        max-height: 80vh;
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    `;
+    
+    modalContent.innerHTML = `
+        <div style="padding: 16px 20px; background: linear-gradient(135deg, #2563eb, #0891b2); color: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.1rem;">
+                    <i class="fas fa-headphones"></i> Pilih Lagu
+                </h3>
+                <button id="closeModalBtn" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <p style="margin: 5px 0 0; font-size: 0.75rem; opacity: 0.9;">Hasil pencarian: "${query}"</p>
+        </div>
+        <div id="songListContainer" style="overflow-y: auto; padding: 16px;">
+            ${songs.map((song, index) => `
+                <div class="song-search-item" data-index="${index}" style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px;
+                    margin-bottom: 10px;
+                    background: #eef0f7;
+                    border-radius: 16px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    border: 1px solid #dde1ef;
+                ">
+                    <img src="${song.artwork}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/50?text=No+Image'">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 0.85rem; color: #1e1e2e;">${escapeHtml(song.title)}</div>
+                        <div style="font-size: 0.7rem; color: #64748b;">${escapeHtml(song.artist)}</div>
+                        <div style="font-size: 0.6rem; color: #64748b; margin-top: 4px;">
+                            <i class="fas fa-play"></i> ${formatDuration(song.duration_seconds)} &nbsp;|&nbsp;
+                            <i class="fas fa-headphones"></i> ${formatNumber(song.plays)}
+                        </div>
+                    </div>
+                    <button class="preview-song-btn" data-url="${song.stream_url}" data-title="${escapeHtml(song.title)}" data-artist="${escapeHtml(song.artist)}" style="
+                        background: linear-gradient(135deg, #2563eb, #0891b2);
+                        border: none;
+                        color: white;
+                        padding: 8px 12px;
+                        border-radius: 40px;
+                        font-size: 0.7rem;
+                        cursor: pointer;
+                    ">
+                        <i class="fas fa-play"></i> Preview
+                    </button>
+                </div>
+            `).join('')}
+        </div>
+        <div style="padding: 12px 16px; border-top: 1px solid #dde1ef; display: flex; gap: 10px;">
+            <button id="cancelSelectSong" style="flex: 1; padding: 10px; border-radius: 40px; border: 1px solid #dde1ef; background: white; cursor: pointer;">Batal</button>
+        </div>
+    `;
+    
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    
+    const closeModal = () => modal.remove();
+    
+    document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+    document.getElementById('cancelSelectSong')?.addEventListener('click', closeModal);
+    
+    document.querySelectorAll('.song-search-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (e.target.classList.contains('preview-song-btn')) return;
+            const index = parseInt(item.dataset.index);
+            const song = songs[index];
+            selectSong(song);
+            closeModal();
+        });
+    });
+    
+    document.querySelectorAll('.preview-song-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const streamUrl = btn.dataset.url;
+            const title = btn.dataset.title;
+            const artist = btn.dataset.artist;
+            playStreamUrl(streamUrl, title, artist);
+        });
+    });
+    
+    if (!document.querySelector('#modalAnimStyle')) {
+        const style = document.createElement('style');
+        style.id = 'modalAnimStyle';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function selectSong(song) {
+    selectedSongData = song;
+    
+    document.getElementById('songTitle').value = song.title;
+    document.getElementById('songArtist').value = song.artist;
+    
+    showToast(`Lagu "${song.title}" dipilih!`, 'fas fa-check-circle');
+    
+    addPreviewButton(song);
+}
+
+function addPreviewButton(song) {
+    const songTitleField = document.getElementById('songTitle').parentElement;
+    const existingPreview = document.getElementById('inlinePreviewBtn');
+    if (existingPreview) existingPreview.remove();
+    
+    const previewBtn = document.createElement('button');
+    previewBtn.id = 'inlinePreviewBtn';
+    previewBtn.innerHTML = '<i class="fas fa-play"></i> Preview';
+    previewBtn.style.cssText = `
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, #2563eb, #0891b2);
+        border: none;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        cursor: pointer;
+    `;
+    
+    previewBtn.onclick = () => {
+        if (song.stream_url) {
+            playStreamUrl(song.stream_url, song.title, song.artist);
+        } else {
+            searchAndPlay(song.title, song.artist);
+        }
+    };
+    
+    songTitleField.style.position = 'relative';
+    songTitleField.appendChild(previewBtn);
+}
+
+function playStreamUrl(streamUrl, title, artist) {
+    const iframe = document.getElementById('musicIframe');
+    const info = document.getElementById('musicInfo');
+    const musicIcon = document.getElementById('musicIcon');
+    
+    const existingAudio = document.getElementById('soundcloudAudio');
+    if (existingAudio) existingAudio.remove();
+    
+    const audio = document.createElement('audio');
+    audio.id = 'soundcloudAudio';
+    audio.src = streamUrl;
+    audio.controls = true;
+    audio.autoplay = true;
+    audio.style.cssText = `
+        position: fixed;
+        bottom: 80px;
+        right: 12px;
+        width: 260px;
+        z-index: 1001;
+        background: #1a1a2e;
+        border-radius: 18px;
+        padding: 8px;
+    `;
+    
+    iframe.src = '';
+    info.innerHTML = `<i class="fas fa-music"></i> ${title} ${artist ? `- ${artist}` : ''} (SoundCloud)`;
+    
+    document.body.appendChild(audio);
+    
+    if (!isOpen) openPlayer();
+    musicIcon.classList.add('playing');
+    showToast(`Memutar: ${title}`, 'fas fa-play');
+    
+    audio.addEventListener('ended', () => {
+        audio.remove();
+        info.innerHTML = 'Belum ada lagu diputar';
+    });
+}
+
+function playSoundCloudStream(streamUrl, title, artist) {
+    const iframe = document.getElementById('musicIframe');
+    const info = document.getElementById('musicInfo');
+    const musicIcon = document.getElementById('musicIcon');
+    
+    const existingAudio = document.getElementById('soundcloudAudio');
+    if (existingAudio) existingAudio.remove();
+    
+    const audio = document.createElement('audio');
+    audio.id = 'soundcloudAudio';
+    audio.src = streamUrl;
+    audio.controls = true;
+    audio.autoplay = true;
+    
+    iframe.src = '';
+    info.innerHTML = `<i class="fas fa-music"></i> ${title} ${artist ? `- ${artist}` : ''} (SoundCloud)`;
+    
+    document.body.appendChild(audio);
+    if (!isOpen) openPlayer();
+    musicIcon.classList.add('playing');
+    showToast(`Memutar: ${title}`, 'fas fa-play');
+    
+    audio.addEventListener('ended', () => {
+        audio.remove();
+        info.innerHTML = 'Belum ada lagu diputar';
+    });
+}
+
 // ============================================================
 // 🎵 MUSIC PLAYER FUNCTIONS
 // ============================================================
@@ -199,6 +479,8 @@ function openPlayer() {
 function closePlayer() {
     const musicIcon = document.getElementById('musicIcon');
     const musicPlayerCard = document.getElementById('musicPlayerCard');
+    const audio = document.getElementById('soundcloudAudio');
+    if (audio) audio.remove();
     musicIcon.classList.remove('hidden');
     musicPlayerCard.classList.add('hidden');
     isOpen = false;
@@ -208,6 +490,8 @@ function playVideoInPlayer(videoId, title, artist) {
     const iframe = document.getElementById('musicIframe');
     const info = document.getElementById('musicInfo');
     const musicIcon = document.getElementById('musicIcon');
+    const audio = document.getElementById('soundcloudAudio');
+    if (audio) audio.remove();
     
     iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
     info.innerHTML = `<i class="fas fa-play"></i> ${title} ${artist ? `- ${artist}` : ''}`;
@@ -274,7 +558,7 @@ function renderCommentSection(postId, commentCount) {
                         <div class="comment-text">${escapeHtml(c.comment)}</div>
                     </div>
                 `).join('')}
-                ${postComments.length === 0 ? '<div style="text-align:center; padding:12px; color:var(--muted); font-size:0.7rem;">Belum ada komentar. Jadi yang pertama!</div>' : ''}
+                ${postComments.length === 0 ? '<div style="text-align:center; padding:12px; color:#64748b; font-size:0.7rem;">Belum ada komentar. Jadi yang pertama!</div>' : ''}
             </div>
             <div class="comment-input-area">
                 <input type="text" class="comment-input" id="commentInput_${postId}" placeholder="Tulis komentar anonim...">
@@ -329,6 +613,11 @@ function renderFeed() {
                 </div>
             `;
         } else {
+            const hasSoundCloud = post.soundcloud_data && post.soundcloud_data.stream_url;
+            const playHandler = hasSoundCloud 
+                ? `playSoundCloudStream('${post.soundcloud_data.stream_url}', '${escapeHtml(post.title)}', '${escapeHtml(post.artist || '')}')`
+                : `searchAndPlay('${escapeHtml(post.title)}', '${escapeHtml(post.artist || '')}')`;
+            
             return `
                 <div class="post-card" data-id="${post.id}">
                     <div class="badge-type badge-song"><i class="fas fa-music"></i> Songfess PNC</div>
@@ -338,17 +627,20 @@ function renderFeed() {
                     </div>
                     <div class="song-preview">
                         <div class="song-info">
-                            <div class="song-icon-wrap"><i class="fas fa-music"></i></div>
+                            ${hasSoundCloud && post.soundcloud_data.artwork ? 
+                                `<img src="${post.soundcloud_data.artwork}" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover;">` :
+                                `<div class="song-icon-wrap"><i class="fas fa-music"></i></div>`
+                            }
                             <div>
                                 <div class="song-title-text">${escapeHtml(post.title)}</div>
                                 ${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}
                             </div>
                         </div>
-                        <button class="btn-play" data-title="${escapeHtml(post.title)}" data-artist="${escapeHtml(post.artist || '')}">
+                        <button class="btn-play" onclick="${playHandler}">
                             <i class="fas fa-play"></i> Putar
                         </button>
                     </div>
-                    ${post.msg ? `<div class="message-text" style="font-size:0.8rem; color:var(--muted);">"${escapeHtml(post.msg)}"</div>` : ''}
+                    ${post.msg ? `<div class="message-text" style="font-size:0.8rem; color:#64748b;">"${escapeHtml(post.msg)}"</div>` : ''}
                     <div class="reaction-row">
                         <button class="reaction" data-emoji="❤️">❤️ ${reacts['❤️'] || 0}</button>
                         <button class="reaction" data-emoji="💬">💬 ${reacts['💬'] || 0}</button>
@@ -360,7 +652,6 @@ function renderFeed() {
         }
     }).join('');
     
-    // Attach event listeners for reactions
     document.querySelectorAll('.reaction').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -374,14 +665,6 @@ function renderFeed() {
                 await updateReactions(id, newReactions);
                 await loadPosts();
             }
-        });
-    });
-    
-    // Attach event listeners for play buttons
-    document.querySelectorAll('.btn-play').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            searchAndPlay(btn.dataset.title, btn.dataset.artist);
         });
     });
 }
@@ -399,6 +682,48 @@ function initToggle(toggleId, nameWrapId, stateRef, setStateFn) {
     });
 }
 
+function setupCounter(inputId, counterId, max) {
+    const el = document.getElementById(inputId);
+    const out = document.getElementById(counterId);
+    el.addEventListener('input', () => out.textContent = `${el.value.length}/${max}`);
+}
+
+function addSearchButton() {
+    const songTitleField = document.getElementById('songTitle').parentElement;
+    const searchBtn = document.createElement('button');
+    searchBtn.id = 'searchSoundCloudBtn';
+    searchBtn.innerHTML = '<i class="fas fa-search"></i> Cari di SoundCloud';
+    searchBtn.style.cssText = `
+        margin-top: 8px;
+        background: linear-gradient(135deg, #ff7700, #ff4400);
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 40px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        width: 100%;
+        font-weight: 600;
+    `;
+    
+    searchBtn.onclick = async () => {
+        const query = document.getElementById('songTitle').value.trim();
+        if (!query) {
+            showToast('Masukkan judul lagu terlebih dahulu!', 'fas fa-exclamation-circle');
+            return;
+        }
+        
+        const results = await searchSoundCloud(query);
+        if (results.length > 0) {
+            showSongSelectionModal(results, query);
+        } else {
+            showToast('Lagu tidak ditemukan di SoundCloud', 'fas fa-exclamation-circle');
+        }
+    };
+    
+    songTitleField.appendChild(searchBtn);
+}
+
 // Initialize toggles
 initToggle('menfAnonToggle', 'menfNameWrap', () => menfAnonState, (v) => menfAnonState = v);
 initToggle('songAnonToggle', 'songNameWrap', () => songAnonState, (v) => songAnonState = v);
@@ -413,11 +738,6 @@ document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(chip => {
 });
 
 // Character counters
-function setupCounter(inputId, counterId, max) {
-    const el = document.getElementById(inputId);
-    const out = document.getElementById(counterId);
-    el.addEventListener('input', () => out.textContent = `${el.value.length}/${max}`);
-}
 setupCounter('menfMsg', 'menfChar', 500);
 setupCounter('songMsgReq', 'songMsgChar', 280);
 
@@ -443,7 +763,6 @@ document.getElementById('submitMenfess').addEventListener('click', async () => {
     };
     await savePost(post);
     
-    // Reset form
     document.getElementById('menfMsg').value = ''; 
     document.getElementById('menfTo').value = ''; 
     document.getElementById('menfChar').textContent = '0/500'; 
@@ -453,15 +772,18 @@ document.getElementById('submitMenfess').addEventListener('click', async () => {
 });
 
 document.getElementById('submitSongfes').addEventListener('click', async () => {
-    const title = document.getElementById('songTitle').value.trim();
+    let title = document.getElementById('songTitle').value.trim();
+    const artist = document.getElementById('songArtist').value.trim();
+    
     if (!title) { 
         showToast('Judul lagu harus diisi!', 'fas fa-exclamation-circle'); 
         return; 
     }
+    
     const from = songAnonState ? 'Anonim' : (document.getElementById('songName').value.trim() || 'Anonim');
-    const artist = document.getElementById('songArtist').value.trim();
     const msg = document.getElementById('songMsgReq').value.trim();
     const to = document.getElementById('songTo').value.trim();
+    
     const post = { 
         type: 'songfes', 
         from, 
@@ -470,17 +792,26 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
         mood: null, 
         title, 
         artist: artist || null, 
-        reactions: { '❤️': 0, '💬': 0, '🎧': 0 } 
+        reactions: { '❤️': 0, '💬': 0, '🎧': 0 },
+        soundcloud_data: selectedSongData ? {
+            stream_url: selectedSongData.stream_url,
+            artwork: selectedSongData.artwork,
+            duration: selectedSongData.duration_seconds
+        } : null
     };
+    
     await savePost(post);
     
-    // Reset form
     document.getElementById('songTitle').value = ''; 
     document.getElementById('songArtist').value = ''; 
     document.getElementById('songMsgReq').value = ''; 
     document.getElementById('songTo').value = ''; 
     document.getElementById('songMsgChar').textContent = '0/280'; 
     document.getElementById('songName').value = '';
+    selectedSongData = null;
+    
+    const inlinePreview = document.getElementById('inlinePreviewBtn');
+    if (inlinePreview) inlinePreview.remove();
 });
 
 // Navigation
@@ -523,9 +854,16 @@ document.addEventListener('mouseup', () => {
     musicFloat.style.cursor = '';
 });
 
+// Add search button when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    addSearchButton();
+});
+
 // Make functions globally accessible
 window.toggleComments = toggleComments;
 window.submitComment = submitComment;
+window.playSoundCloudStream = playSoundCloudStream;
+window.searchAndPlay = searchAndPlay;
 
 // Initial load
 loadPosts();

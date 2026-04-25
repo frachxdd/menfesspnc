@@ -290,7 +290,7 @@ function showSongSelectionModal(songs, query) {
                             <i class="fas fa-headphones"></i> ${formatNumber(song.plays)}
                         </div>
                     </div>
-                    <button class="preview-song-btn" data-url="${song.stream_url}" data-title="${escapeHtml(song.title)}" data-artist="${escapeHtml(song.artist)}" style="
+                    <button class="preview-song-btn" data-url="${song.stream_url}" data-title="${escapeHtml(song.title)}" data-artist="${escapeHtml(song.artist)}" data-permalink="${song.url}" style="
                         background: linear-gradient(135deg, #2563eb, #0891b2);
                         border: none;
                         color: white;
@@ -351,7 +351,14 @@ function showSongSelectionModal(songs, query) {
 }
 
 function selectSong(song) {
-    selectedSongData = song;
+    selectedSongData = {
+        title: song.title,
+        artist: song.artist,
+        stream_url: song.stream_url,
+        artwork: song.artwork,
+        duration_seconds: song.duration_seconds,
+        permalink_url: song.url
+    };
     
     document.getElementById('songTitle').value = song.title;
     document.getElementById('songArtist').value = song.artist;
@@ -389,6 +396,77 @@ function playStreamUrl(streamUrl, title, artist) {
     currentAudio = audio;
     
     showToast(`🎵 Memutar: ${title}`, 'fas fa-play');
+}
+
+// ============================================================
+// 🎵 PLAY SONG FROM DATABASE (DENGAN REFRESH STREAM_URL)
+// ============================================================
+async function playSongFromDatabase(post) {
+    const soundcloudData = post.soundcloud_data;
+    
+    if (!soundcloudData || !soundcloudData.permalink_url) {
+        // Fallback ke stream_url lama kalo ga ada permalink_url
+        if (soundcloudData && soundcloudData.stream_url) {
+            playStreamUrl(soundcloudData.stream_url, post.title, post.artist);
+            return;
+        }
+        showToast("Data lagu tidak lengkap", "fas fa-exclamation-circle");
+        return;
+    }
+    
+    try {
+        showToast("Menyiapkan lagu...", "fas fa-circle-notch fa-spin");
+        
+        // Fetch ulang stream_url dari API pake permalink_url
+        const response = await fetch(`${SOUNDCLOUD_API_URL}?url=${encodeURIComponent(soundcloudData.permalink_url)}`, {
+            headers: { "accept": "application/json" }
+        });
+        const data = await response.json();
+        
+        if (!data.status || !data.result || !data.result.stream_url) {
+            throw new Error("Gagal mendapatkan stream URL");
+        }
+        
+        const freshStreamUrl = data.result.stream_url;
+        
+        // Play lagu dengan stream_url fresh
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.remove();
+            currentAudio = null;
+        }
+        
+        const audio = new Audio(freshStreamUrl);
+        audio.autoplay = true;
+        
+        audio.addEventListener('ended', () => {
+            audio.remove();
+            if (currentAudio === audio) currentAudio = null;
+        });
+        
+        audio.addEventListener('error', () => {
+            showToast("Gagal memutar lagu", "fas fa-exclamation-circle");
+            audio.remove();
+            if (currentAudio === audio) currentAudio = null;
+        });
+        
+        document.body.appendChild(audio);
+        currentAudio = audio;
+        showToast(`🎵 Memutar: ${post.title}`, 'fas fa-play');
+        
+    } catch (error) {
+        console.error(error);
+        showToast("Gagal memutar lagu, coba lagi nanti", "fas fa-exclamation-circle");
+    }
+}
+
+async function playSongFromPostId(postId) {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+        await playSongFromDatabase(post);
+    } else {
+        showToast("Postingan tidak ditemukan", "fas fa-exclamation-circle");
+    }
 }
 
 // ============================================================
@@ -484,8 +562,7 @@ function renderFeed() {
                 </div>
             `;
         } else {
-            const hasSoundCloud = post.soundcloud_data && post.soundcloud_data.stream_url;
-            const streamUrl = hasSoundCloud ? post.soundcloud_data.stream_url : '';
+            const hasSoundCloud = post.soundcloud_data && post.soundcloud_data.permalink_url;
             const artwork = hasSoundCloud && post.soundcloud_data.artwork ? post.soundcloud_data.artwork : null;
             
             return `
@@ -506,7 +583,7 @@ function renderFeed() {
                                 ${post.artist ? `<div class="song-artist-text">${escapeHtml(post.artist)}</div>` : ''}
                             </div>
                         </div>
-                        <button class="btn-play" onclick="playStreamUrl('${streamUrl.replace(/'/g, "\\'")}', '${escapeHtml(post.title).replace(/'/g, "\\'")}', '${escapeHtml(post.artist || '').replace(/'/g, "\\'")}')">
+                        <button class="btn-play" onclick="playSongFromPostId(${post.id})">
                             <i class="fas fa-play"></i>
                         </button>
                     </div>
@@ -561,7 +638,6 @@ function setupCounter(inputId, counterId, max) {
 function addSearchButton() {
     const songTitleField = document.getElementById('songTitle').parentElement;
     
-    // Cek apakah tombol sudah ada
     if (document.getElementById('searchSoundCloudBtn')) return;
     
     const searchBtn = document.createElement('button');
@@ -680,7 +756,8 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
         soundcloud_data: selectedSongData ? {
             stream_url: selectedSongData.stream_url,
             artwork: selectedSongData.artwork,
-            duration: selectedSongData.duration_seconds
+            duration: selectedSongData.duration_seconds,
+            permalink_url: selectedSongData.permalink_url
         } : null
     };
     
@@ -708,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Make functions globally accessible
 window.toggleComments = toggleComments;
 window.submitComment = submitComment;
-window.playStreamUrl = playStreamUrl;
+window.playSongFromPostId = playSongFromPostId;
 
 // Initial load
 loadPosts();

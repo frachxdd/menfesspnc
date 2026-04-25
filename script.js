@@ -487,6 +487,7 @@ async function playStreamUrl(streamUrl, title, artist, buttonElement = null, per
     });
     
     document.body.appendChild(audio);
+    showToast(`🎵 Memutar: ${title}`, 'fas fa-play');
 }
 
 function playDirectUrl(streamUrl, title, artist, buttonElement = null) {
@@ -544,6 +545,7 @@ function playDirectUrl(streamUrl, title, artist, buttonElement = null) {
     });
     
     document.body.appendChild(audio);
+    showToast(`🎵 Memutar: ${title}`, 'fas fa-play');
 }
 
 function playSongFromPost(post, buttonElement = null) {

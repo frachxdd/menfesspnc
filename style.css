@@ -431,7 +431,6 @@ textarea { min-height: 80px; }
   margin-top: 2px; 
 }
 
-/* TOMBOL PLAY KAYAK AWAL - PAKAI TEKS PUTAR */
 .btn-play {
   background: linear-gradient(135deg, var(--blue), var(--cyan));
   border: none;
@@ -656,6 +655,7 @@ textarea { min-height: 80px; }
 
 .nav-item.active i { color: var(--blue); }
 
+/* TOAST MESSAGE - FLEXIBEL & GA KEPOTONG */
 .toast-message {
   position: fixed;
   bottom: 80px;
@@ -664,19 +664,37 @@ textarea { min-height: 80px; }
   background: white;
   border: 1px solid #bfdbfe;
   box-shadow: 0 4px 24px rgba(37,99,235,0.15);
-  padding: 8px 20px;
+  padding: 10px 20px;
   border-radius: 99px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   z-index: 999;
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text);
   font-weight: 500;
   opacity: 0;
   pointer-events: none;
-  white-space: nowrap;
+  max-width: 85vw;
+  width: auto;
+  min-width: 120px;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+  justify-content: center;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.toast-message i {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+.toast-message span {
+  flex: 1;
+  text-align: center;
 }
 
 .toast-message.show {
@@ -745,4 +763,11 @@ button:focus, button:active,
   }
   
   .running-text marquee { font-size: 0.7rem; }
+  
+  .toast-message {
+    max-width: 90vw;
+    padding: 8px 16px;
+    font-size: 0.7rem;
+    bottom: 70px;
+  }
 }

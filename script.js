@@ -809,7 +809,9 @@ document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(chip => {
 setupCounter('menfMsg', 'menfChar', 500);
 setupCounter('songMsgReq', 'songMsgChar', 280);
 
-// Submit handler Menfess
+// ============================================================
+// SUBMIT HANDLER MENFESS
+// ============================================================
 document.getElementById('submitMenfess').addEventListener('click', async () => {
     const submitBtn = document.getElementById('submitMenfess');
     const btnOriginalHtml = submitBtn.innerHTML;
@@ -823,7 +825,7 @@ document.getElementById('submitMenfess').addEventListener('click', async () => {
     }
     
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+    submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Mengirim...';
     
     try {
         const from = menfAnonState ? 'Anonim' : (document.getElementById('menfName').value.trim() || 'Anonim');
@@ -855,7 +857,9 @@ document.getElementById('submitMenfess').addEventListener('click', async () => {
     }
 });
 
-// Submit handler Songfess (dengan loading state)
+// ============================================================
+// SUBMIT HANDLER SONGFESS
+// ============================================================
 document.getElementById('submitSongfes').addEventListener('click', async () => {
     const submitBtn = document.getElementById('submitSongfes');
     const btnOriginalHtml = submitBtn.innerHTML;
@@ -874,27 +878,21 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
     const msg = document.getElementById('songMsgReq').value.trim();
     const to = document.getElementById('songTo').value.trim();
     
-    // ========== LOADING STATE ==========
+    // LOADING STATE
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-    showToast('Mengirim permintaan...', 'fas fa-hourglass-half');
+    submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Mengirim...';
     
     try {
         let finalStreamUrl = selectedSongData?.stream_url;
         let isUploaded = false;
         
-        // Upload ke storage (jalan di background)
         if (selectedSongData && selectedSongData.stream_url) {
-            submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt fa-spin"></i> Menyimpan lagu...';
             const uploadedUrl = await uploadToStorage(selectedSongData.stream_url, title);
             if (uploadedUrl) {
                 finalStreamUrl = uploadedUrl;
                 isUploaded = true;
             }
         }
-        
-        // Simpan ke database
-        submitBtn.innerHTML = '<i class="fas fa-save fa-spin"></i> Menyimpan...';
         
         const post = { 
             type: 'songfes', 
@@ -916,7 +914,6 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
         
         await savePost(post);
         
-        // Reset form
         document.getElementById('songTitle').value = ''; 
         document.getElementById('songArtist').value = ''; 
         document.getElementById('songMsgReq').value = ''; 

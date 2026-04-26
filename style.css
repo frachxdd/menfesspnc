@@ -288,6 +288,25 @@ textarea { min-height: 80px; }
 
 .btn-submit:active { transform: scale(0.97); }
 
+/* Disabled button style - hilangin efek biru */
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Hilangin efek fokus biru di semua tombol */
+.btn-submit:focus,
+.btn-submit:active,
+button:focus,
+button:active {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
 .feed-header {
   display: flex;
   justify-content: space-between;
@@ -655,9 +674,7 @@ textarea { min-height: 80px; }
 
 .nav-item.active i { color: var(--blue); }
 
-/* ============================================ */
 /* TOAST MESSAGE - GA KEPOTONG & BISA SCROLL */
-/* ============================================ */
 .toast-message {
   position: fixed;
   bottom: 80px;
@@ -686,7 +703,6 @@ textarea { min-height: 80px; }
   scrollbar-width: thin;
 }
 
-/* Sembunyiin scrollbar tapi tetep bisa scroll (opsional) */
 .toast-message::-webkit-scrollbar {
   height: 3px;
 }
@@ -743,11 +759,13 @@ textarea { min-height: 80px; }
   transform: translateY(0);
 }
 
+/* Hilangin outline biru di semua elemen interaktif */
 button:focus, button:active,
 .btn-play:focus, .btn-play:active,
 .reaction:focus, .reaction:active,
 .nav-item:focus, .nav-item:active,
 .btn-submit:focus, .btn-submit:active,
+.music-icon:focus, .music-icon:active,
 .toggle-anon:focus, .toggle-anon:active,
 .mood-chip:focus, .mood-chip:active,
 .comment-btn:focus, .comment-btn:active,

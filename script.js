@@ -809,37 +809,59 @@ document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(chip => {
 setupCounter('menfMsg', 'menfChar', 500);
 setupCounter('songMsgReq', 'songMsgChar', 280);
 
-// Submit handlers
+// Submit handler Menfess
 document.getElementById('submitMenfess').addEventListener('click', async () => {
+    const submitBtn = document.getElementById('submitMenfess');
+    const btnOriginalHtml = submitBtn.innerHTML;
+    
+    if (submitBtn.disabled) return;
+    
     const msg = document.getElementById('menfMsg').value.trim();
     if (!msg) { 
         showToast('Pesan tidak boleh kosong!', 'fas fa-exclamation-circle'); 
         return; 
     }
-    const from = menfAnonState ? 'Anonim' : (document.getElementById('menfName').value.trim() || 'Anonim');
-    const to = document.getElementById('menfTo').value.trim();
-    const mood = currentMoodMenf || '';
-    const post = { 
-        type: 'menfes', 
-        from, 
-        to: to || null, 
-        msg, 
-        mood: mood || null, 
-        title: null, 
-        artist: null, 
-        reactions: { '❤️': 0, '💬': 0, '🎧': 0 } 
-    };
-    await savePost(post);
     
-    document.getElementById('menfMsg').value = ''; 
-    document.getElementById('menfTo').value = ''; 
-    document.getElementById('menfChar').textContent = '0/500'; 
-    document.getElementById('menfName').value = '';
-    document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(c => c.classList.remove('selected')); 
-    currentMoodMenf = '';
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+    
+    try {
+        const from = menfAnonState ? 'Anonim' : (document.getElementById('menfName').value.trim() || 'Anonim');
+        const to = document.getElementById('menfTo').value.trim();
+        const mood = currentMoodMenf || '';
+        const post = { 
+            type: 'menfes', 
+            from, 
+            to: to || null, 
+            msg, 
+            mood: mood || null, 
+            title: null, 
+            artist: null, 
+            reactions: { '❤️': 0, '💬': 0, '🎧': 0 } 
+        };
+        await savePost(post);
+        
+        document.getElementById('menfMsg').value = ''; 
+        document.getElementById('menfTo').value = ''; 
+        document.getElementById('menfChar').textContent = '0/500'; 
+        document.getElementById('menfName').value = '';
+        document.querySelectorAll('#moodContainerMenf .mood-chip').forEach(c => c.classList.remove('selected')); 
+        currentMoodMenf = '';
+    } catch (error) {
+        console.error(error);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = btnOriginalHtml;
+    }
 });
 
+// Submit handler Songfess (dengan loading state)
 document.getElementById('submitSongfes').addEventListener('click', async () => {
+    const submitBtn = document.getElementById('submitSongfes');
+    const btnOriginalHtml = submitBtn.innerHTML;
+    
+    if (submitBtn.disabled) return;
+    
     let title = document.getElementById('songTitle').value.trim();
     const artist = document.getElementById('songArtist').value.trim();
     
@@ -852,44 +874,66 @@ document.getElementById('submitSongfes').addEventListener('click', async () => {
     const msg = document.getElementById('songMsgReq').value.trim();
     const to = document.getElementById('songTo').value.trim();
     
-    let finalStreamUrl = selectedSongData?.stream_url;
-    let isUploaded = false;
+    // ========== LOADING STATE ==========
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+    showToast('Mengirim permintaan...', 'fas fa-hourglass-half');
     
-    if (selectedSongData && selectedSongData.stream_url) {
-        const uploadedUrl = await uploadToStorage(selectedSongData.stream_url, title);
-        if (uploadedUrl) {
-            finalStreamUrl = uploadedUrl;
-            isUploaded = true;
+    try {
+        let finalStreamUrl = selectedSongData?.stream_url;
+        let isUploaded = false;
+        
+        // Upload ke storage (jalan di background)
+        if (selectedSongData && selectedSongData.stream_url) {
+            submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt fa-spin"></i> Menyimpan lagu...';
+            const uploadedUrl = await uploadToStorage(selectedSongData.stream_url, title);
+            if (uploadedUrl) {
+                finalStreamUrl = uploadedUrl;
+                isUploaded = true;
+            }
         }
+        
+        // Simpan ke database
+        submitBtn.innerHTML = '<i class="fas fa-save fa-spin"></i> Menyimpan...';
+        
+        const post = { 
+            type: 'songfes', 
+            from, 
+            to: to || null, 
+            msg: msg || null, 
+            mood: null, 
+            title, 
+            artist: artist || null, 
+            reactions: { '❤️': 0, '💬': 0, '🎧': 0 },
+            soundcloud_data: selectedSongData ? {
+                stream_url: finalStreamUrl,
+                artwork: selectedSongData.artwork,
+                duration: selectedSongData.duration_seconds,
+                permalink_url: selectedSongData.permalink_url,
+                is_uploaded: isUploaded
+            } : null
+        };
+        
+        await savePost(post);
+        
+        // Reset form
+        document.getElementById('songTitle').value = ''; 
+        document.getElementById('songArtist').value = ''; 
+        document.getElementById('songMsgReq').value = ''; 
+        document.getElementById('songTo').value = ''; 
+        document.getElementById('songMsgChar').textContent = '0/280'; 
+        document.getElementById('songName').value = '';
+        selectedSongData = null;
+        
+        showToast('Berhasil dikirim!', 'fas fa-check-circle');
+        
+    } catch (error) {
+        console.error(error);
+        showToast('Gagal mengirim, coba lagi', 'fas fa-exclamation-circle');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = btnOriginalHtml;
     }
-    
-    const post = { 
-        type: 'songfes', 
-        from, 
-        to: to || null, 
-        msg: msg || null, 
-        mood: null, 
-        title, 
-        artist: artist || null, 
-        reactions: { '❤️': 0, '💬': 0, '🎧': 0 },
-        soundcloud_data: selectedSongData ? {
-            stream_url: finalStreamUrl,
-            artwork: selectedSongData.artwork,
-            duration: selectedSongData.duration_seconds,
-            permalink_url: selectedSongData.permalink_url,
-            is_uploaded: isUploaded
-        } : null
-    };
-    
-    await savePost(post);
-    
-    document.getElementById('songTitle').value = ''; 
-    document.getElementById('songArtist').value = ''; 
-    document.getElementById('songMsgReq').value = ''; 
-    document.getElementById('songTo').value = ''; 
-    document.getElementById('songMsgChar').textContent = '0/280'; 
-    document.getElementById('songName').value = '';
-    selectedSongData = null;
 });
 
 // Navigation

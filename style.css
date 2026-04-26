@@ -288,22 +288,27 @@ textarea { min-height: 80px; }
 
 .btn-submit:active { transform: scale(0.97); }
 
-/* Disabled button style - hilangin efek biru */
+/* Disabled button style */
 .btn-submit:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none !important;
   box-shadow: none !important;
-  outline: none !important;
 }
 
-/* Hilangin efek fokus biru di semua tombol */
+/* HAPUS SEMUA EFEK BIRU DI TOMBOL */
 .btn-submit:focus,
+.btn-submit:focus-visible,
+.btn-submit:focus-within,
 .btn-submit:active,
 button:focus,
+button:focus-visible,
 button:active {
   outline: none !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
   box-shadow: none !important;
+  border: none !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 
@@ -759,7 +764,19 @@ button:active {
   transform: translateY(0);
 }
 
-/* Hilangin outline biru di semua elemen interaktif */
+/* HAPUS SEMUA OUTLINE BIRU DI SEMUA ELEMEN */
+*:focus,
+*:focus-visible,
+*:focus-within,
+*:active {
+  outline: none !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Khusus untuk tombol biar aman */
 button:focus, button:active,
 .btn-play:focus, .btn-play:active,
 .reaction:focus, .reaction:active,
@@ -771,8 +788,10 @@ button:focus, button:active,
 .comment-btn:focus, .comment-btn:active,
 .comment-submit:focus, .comment-submit:active {
   outline: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
   box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 @media (max-width: 480px) {

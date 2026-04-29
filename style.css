@@ -1,4 +1,4 @@
-/* IMPORT FONT ADELIA - Tambahan di awal */
+/* IMPORT FONT ADELIA */
 @font-face {
   font-family: 'Adelia';
   src: url('ADELIA.otf') format('opentype');
@@ -67,7 +67,7 @@ body {
   margin-bottom: 0.8rem;
 }
 
-/* HANYA INI YANG DIGANTI - JUDUL PAKAI FONT ADELIA */
+/* JUDUL PAKAI FONT ADELIA */
 h1 {
   font-family: 'Adelia', 'Plus Jakarta Sans', cursive;
   font-size: clamp(1.8rem, 7vw, 3rem);
@@ -83,14 +83,18 @@ h1 {
   margin-top: 6px;
 }
 
+/* RUNNING TEXT - TANPA BACKGROUND + EFEK FADE DI UJUNG */
 .running-text {
-  background: linear-gradient(135deg, var(--blue-mid), var(--blue-light));
+  background: transparent;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  padding: 8px 0;
+  padding: 10px 0;
   margin-top: 16px;
-  border-radius: 40px;
   width: 100%;
+  border-radius: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .running-text marquee {

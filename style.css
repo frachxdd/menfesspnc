@@ -1,3 +1,16 @@
+/* Import font Adelia - pastikan file font sudah diupload */
+@font-face {
+  font-family: 'Adelia';
+  src: url('Adelia.otf') format('opentype'),
+       url('Adelia.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Atau pake font Adelia dari CDN (mirip) */
+@import url('https://fonts.cdnfonts.com/css/adelia');
+
 *, *::before, *::after { 
   margin: 0; 
   padding: 0; 
@@ -30,8 +43,8 @@ body {
   padding-bottom: 100px;
   background-color: #f8faff;
   background-image: 
-    linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(37, 99, 235, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.04) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -58,13 +71,15 @@ body {
   margin-bottom: 0.8rem;
 }
 
+/* JUDUL PAKAI FONT ADELIA */
 h1 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Adelia', 'Plus Jakarta Sans', cursive;
   font-size: clamp(1.8rem, 7vw, 3rem);
-  font-weight: 800;
+  font-weight: normal;
   color: var(--blue);
   line-height: 1.2;
-  text-shadow: 0 0 15px rgba(37, 99, 235, 0.45), 0 0 30px rgba(37, 99, 235, 0.2);
+  text-shadow: none;
+  letter-spacing: 1px;
 }
 
 .tagline {
@@ -73,20 +88,21 @@ h1 {
   margin-top: 6px;
 }
 
+/* Running text - FULL WIDTH */
 .running-text {
-  background: linear-gradient(135deg, var(--blue-mid), var(--blue-light));
+  background: var(--blue-mid);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   padding: 8px 0;
   margin-top: 16px;
-  border-radius: 40px;
   width: 100%;
+  border-radius: 0;
 }
 
 .running-text marquee {
   font-size: 0.75rem;
   color: var(--blue);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.3px;
 }
 
@@ -168,7 +184,7 @@ input[type="text"], textarea {
 input[type="text"]:focus, textarea:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
   background: #fff;
 }
 
@@ -278,17 +294,16 @@ textarea { min-height: 80px; }
   cursor: pointer;
   margin-top: 6px;
   transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.2);
 }
 
 .btn-submit:hover { 
-  box-shadow: 0 6px 24px rgba(37,99,235,0.4); 
+  box-shadow: 0 6px 20px rgba(37,99,235,0.3); 
   transform: translateY(-1px); 
 }
 
 .btn-submit:active { transform: scale(0.97); }
 
-/* Disabled button style */
 .btn-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -296,20 +311,15 @@ textarea { min-height: 80px; }
   box-shadow: none !important;
 }
 
-/* HAPUS SEMUA EFEK BIRU DI TOMBOL */
 .btn-submit:focus,
 .btn-submit:focus-visible,
-.btn-submit:focus-within,
 .btn-submit:active,
 button:focus,
 button:focus-visible,
 button:active {
   outline: none !important;
-  outline-color: transparent !important;
-  outline-width: 0 !important;
   box-shadow: none !important;
   border: none !important;
-  -webkit-tap-highlight-color: transparent !important;
 }
 
 .feed-header {
@@ -351,7 +361,7 @@ button:active {
 
 .post-card:hover { 
   box-shadow: var(--shadow-md); 
-  transform: translateY(-1px); 
+  transform: translateY(-2px); 
 }
 
 .badge-type {
@@ -365,7 +375,6 @@ button:active {
   border: 1px solid #bfdbfe;
   padding: 3px 10px;
   border-radius: 99px;
-  letter-spacing: 0.3px;
 }
 
 .badge-song {
@@ -394,7 +403,7 @@ button:active {
 
 .message-text {
   font-size: 0.85rem;
-  line-height: 1.5;
+  line-height: 1.45;
   color: var(--text);
   margin: 8px 0;
 }
@@ -504,13 +513,6 @@ button:active {
 .reaction:hover { 
   border-color: var(--blue-soft); 
   color: var(--blue); 
-}
-
-.reaction.reacted {
-  background: var(--blue-mid);
-  border-color: var(--blue);
-  color: var(--blue);
-  font-weight: 600;
 }
 
 .comments-section {
@@ -649,7 +651,7 @@ button:active {
   align-items: center;
   padding: 5px 8px;
   z-index: 100;
-  box-shadow: 0 8px 32px rgba(37,99,235,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 32px rgba(37,99,235,0.08);
 }
 
 .nav-item {
@@ -679,7 +681,6 @@ button:active {
 
 .nav-item.active i { color: var(--blue); }
 
-/* TOAST MESSAGE - GA KEPOTONG & BISA SCROLL */
 .toast-message {
   position: fixed;
   bottom: 80px;
@@ -735,7 +736,6 @@ button:active {
   opacity: 1;
 }
 
-/* Modal Styles */
 .song-search-item {
   transition: all 0.2s ease;
 }
@@ -764,19 +764,14 @@ button:active {
   transform: translateY(0);
 }
 
-/* HAPUS SEMUA OUTLINE BIRU DI SEMUA ELEMEN */
 *:focus,
 *:focus-visible,
 *:focus-within,
 *:active {
   outline: none !important;
-  outline-color: transparent !important;
-  outline-width: 0 !important;
   box-shadow: none !important;
-  -webkit-tap-highlight-color: transparent !important;
 }
 
-/* Khusus untuk tombol biar aman */
 button:focus, button:active,
 .btn-play:focus, .btn-play:active,
 .reaction:focus, .reaction:active,
@@ -788,10 +783,37 @@ button:focus, button:active,
 .comment-btn:focus, .comment-btn:active,
 .comment-submit:focus, .comment-submit:active {
   outline: none !important;
-  outline-color: transparent !important;
-  outline-width: 0 !important;
   box-shadow: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+}
+
+.music-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.music-icon i {
+  font-size: 1.3rem;
+  color: white;
+}
+
+.music-icon:hover {
+  transform: scale(1.05);
+}
+
+.hidden {
+  display: none;
 }
 
 @media (max-width: 480px) {
@@ -818,5 +840,16 @@ button:focus, button:active,
     padding: 6px 14px;
     font-size: 0.7rem;
     bottom: 70px;
+  }
+  
+  .music-icon {
+    width: 40px;
+    height: 40px;
+    bottom: 70px;
+    right: 12px;
+  }
+  
+  .music-icon i {
+    font-size: 1rem;
   }
 }

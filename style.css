@@ -1,8 +1,8 @@
 /* Import font Adelia - pastikan file font sudah diupload */
 @font-face {
   font-family: 'Adelia';
-  src: url('Adelia.otf') format('opentype'),
-       url('Adelia.ttf') format('truetype');
+  src: url('ADELIA.otf') format('opentype'),
+       url('ADELIA.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

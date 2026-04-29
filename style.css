@@ -1,15 +1,11 @@
-/* Import font Adelia - pastikan file font sudah diupload */
+/* IMPORT FONT ADELIA */
 @font-face {
   font-family: 'Adelia';
-  src: url('ADELIA.otf') format('opentype'),
-       url('ADELIA.ttf') format('truetype');
+  src: url('ADELIA.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
-
-/* Atau pake font Adelia dari CDN (mirip) */
-@import url('https://fonts.cdnfonts.com/css/adelia');
 
 *, *::before, *::after { 
   margin: 0; 
@@ -43,8 +39,8 @@ body {
   padding-bottom: 100px;
   background-color: #f8faff;
   background-image: 
-    linear-gradient(rgba(37, 99, 235, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37, 99, 235, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -88,7 +84,7 @@ h1 {
   margin-top: 6px;
 }
 
-/* Running text - FULL WIDTH */
+/* RUNNING TEXT - FULL WIDTH, TIDAK BULAT */
 .running-text {
   background: var(--blue-mid);
   border-top: 1px solid var(--border);
@@ -102,7 +98,7 @@ h1 {
 .running-text marquee {
   font-size: 0.75rem;
   color: var(--blue);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.3px;
 }
 
@@ -184,7 +180,7 @@ input[type="text"], textarea {
 input[type="text"]:focus, textarea:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
   background: #fff;
 }
 
@@ -294,11 +290,11 @@ textarea { min-height: 80px; }
   cursor: pointer;
   margin-top: 6px;
   transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.3);
 }
 
 .btn-submit:hover { 
-  box-shadow: 0 6px 20px rgba(37,99,235,0.3); 
+  box-shadow: 0 6px 24px rgba(37,99,235,0.4); 
   transform: translateY(-1px); 
 }
 
@@ -311,15 +307,22 @@ textarea { min-height: 80px; }
   box-shadow: none !important;
 }
 
+/* HILANGIN EFEK BIRU PAS NGEKLIK - FIX TOTAL */
 .btn-submit:focus,
 .btn-submit:focus-visible,
+.btn-submit:focus-within,
 .btn-submit:active,
 button:focus,
 button:focus-visible,
-button:active {
+button:active,
+button:focus-within {
   outline: none !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
   box-shadow: none !important;
   border: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  background: linear-gradient(135deg, var(--blue) 0%, #1d4ed8 100%) !important;
 }
 
 .feed-header {
@@ -361,7 +364,7 @@ button:active {
 
 .post-card:hover { 
   box-shadow: var(--shadow-md); 
-  transform: translateY(-2px); 
+  transform: translateY(-1px); 
 }
 
 .badge-type {
@@ -375,6 +378,7 @@ button:active {
   border: 1px solid #bfdbfe;
   padding: 3px 10px;
   border-radius: 99px;
+  letter-spacing: 0.3px;
 }
 
 .badge-song {
@@ -403,7 +407,7 @@ button:active {
 
 .message-text {
   font-size: 0.85rem;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--text);
   margin: 8px 0;
 }
@@ -491,6 +495,15 @@ button:active {
 
 .btn-play:active { transform: scale(0.98); }
 
+/* HILANGIN EFEK BIRU DI BTN PLAY */
+.btn-play:focus,
+.btn-play:focus-visible,
+.btn-play:active {
+  outline: none !important;
+  box-shadow: none !important;
+  background: linear-gradient(135deg, var(--blue), var(--cyan)) !important;
+}
+
 .reaction-row { 
   display: flex; 
   gap: 6px; 
@@ -513,6 +526,21 @@ button:active {
 .reaction:hover { 
   border-color: var(--blue-soft); 
   color: var(--blue); 
+}
+
+.reaction.reacted {
+  background: var(--blue-mid);
+  border-color: var(--blue);
+  color: var(--blue);
+  font-weight: 600;
+}
+
+/* HILANGIN EFEK BIRU DI REACTION */
+.reaction:focus,
+.reaction:focus-visible,
+.reaction:active {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .comments-section {
@@ -538,6 +566,11 @@ button:active {
 .comment-btn:hover {
   background: var(--surface);
   color: var(--blue);
+}
+
+.comment-btn:focus,
+.comment-btn:active {
+  outline: none !important;
 }
 
 .comment-list {
@@ -617,6 +650,12 @@ button:active {
   font-size: 0.75rem;
 }
 
+.comment-submit:focus,
+.comment-submit:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .empty-feed {
   text-align: center;
   padding: 2rem 1rem;
@@ -651,7 +690,7 @@ button:active {
   align-items: center;
   padding: 5px 8px;
   z-index: 100;
-  box-shadow: 0 8px 32px rgba(37,99,235,0.08);
+  box-shadow: 0 8px 32px rgba(37,99,235,0.12), 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .nav-item {
@@ -681,6 +720,13 @@ button:active {
 
 .nav-item.active i { color: var(--blue); }
 
+.nav-item:focus,
+.nav-item:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* TOAST MESSAGE */
 .toast-message {
   position: fixed;
   bottom: 80px;
@@ -736,6 +782,7 @@ button:active {
   opacity: 1;
 }
 
+/* Modal Styles */
 .song-search-item {
   transition: all 0.2s ease;
 }
@@ -764,28 +811,40 @@ button:active {
   transform: translateY(0);
 }
 
+#searchSoundCloudBtn:focus {
+  outline: none !important;
+}
+
+/* HAPUS SEMUA OUTLINE BIRU DI SEMUA ELEMEN */
 *:focus,
 *:focus-visible,
 *:focus-within,
 *:active {
   outline: none !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
   box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
+/* Khusus untuk tombol biar aman */
 button:focus, button:active,
 .btn-play:focus, .btn-play:active,
 .reaction:focus, .reaction:active,
 .nav-item:focus, .nav-item:active,
 .btn-submit:focus, .btn-submit:active,
-.music-icon:focus, .music-icon:active,
 .toggle-anon:focus, .toggle-anon:active,
 .mood-chip:focus, .mood-chip:active,
 .comment-btn:focus, .comment-btn:active,
 .comment-submit:focus, .comment-submit:active {
   outline: none !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
   box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
+/* Music Player */
 .music-icon {
   width: 48px;
   height: 48px;
@@ -798,8 +857,8 @@ button:focus, button:active,
   box-shadow: 0 2px 12px rgba(0,0,0,0.1);
   transition: all 0.2s;
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 100px;
+  right: 16px;
   z-index: 100;
 }
 
@@ -812,8 +871,73 @@ button:focus, button:active,
   transform: scale(1.05);
 }
 
+.music-icon:focus {
+  outline: none !important;
+}
+
 .hidden {
   display: none;
+}
+
+.music-player-card {
+  position: fixed;
+  bottom: 100px;
+  right: 16px;
+  width: 280px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  z-index: 99;
+  overflow: hidden;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--surface);
+  cursor: grab;
+  border-bottom: 1px solid var(--border);
+}
+
+.drag-icon {
+  cursor: grab;
+  color: var(--muted);
+}
+
+.close-player {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.iframe-wrapper {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+.iframe-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.player-info {
+  padding: 8px 12px;
+  background: var(--surface);
+  font-size: 0.7rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 480px) {
@@ -843,10 +967,10 @@ button:focus, button:active,
   }
   
   .music-icon {
-    width: 40px;
-    height: 40px;
-    bottom: 70px;
+    bottom: 80px;
     right: 12px;
+    width: 42px;
+    height: 42px;
   }
   
   .music-icon i {

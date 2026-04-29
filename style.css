@@ -1,4 +1,4 @@
-/* IMPORT FONT ADELIA */
+/* IMPORT FONT ADELIA - Tambahan di awal */
 @font-face {
   font-family: 'Adelia';
   src: url('ADELIA.otf') format('opentype');
@@ -67,15 +67,14 @@ body {
   margin-bottom: 0.8rem;
 }
 
-/* JUDUL PAKAI FONT ADELIA */
+/* HANYA INI YANG DIGANTI - JUDUL PAKAI FONT ADELIA */
 h1 {
   font-family: 'Adelia', 'Plus Jakarta Sans', cursive;
   font-size: clamp(1.8rem, 7vw, 3rem);
   font-weight: normal;
   color: var(--blue);
   line-height: 1.2;
-  text-shadow: none;
-  letter-spacing: 1px;
+  text-shadow: 0 0 15px rgba(37, 99, 235, 0.45), 0 0 30px rgba(37, 99, 235, 0.2);
 }
 
 .tagline {
@@ -84,15 +83,14 @@ h1 {
   margin-top: 6px;
 }
 
-/* RUNNING TEXT - FULL WIDTH, TIDAK BULAT */
 .running-text {
-  background: var(--blue-mid);
+  background: linear-gradient(135deg, var(--blue-mid), var(--blue-light));
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   padding: 8px 0;
   margin-top: 16px;
+  border-radius: 40px;
   width: 100%;
-  border-radius: 0;
 }
 
 .running-text marquee {
@@ -300,6 +298,7 @@ textarea { min-height: 80px; }
 
 .btn-submit:active { transform: scale(0.97); }
 
+/* Disabled button style */
 .btn-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -307,22 +306,20 @@ textarea { min-height: 80px; }
   box-shadow: none !important;
 }
 
-/* HILANGIN EFEK BIRU PAS NGEKLIK - FIX TOTAL */
+/* HAPUS SEMUA EFEK BIRU DI TOMBOL */
 .btn-submit:focus,
 .btn-submit:focus-visible,
 .btn-submit:focus-within,
 .btn-submit:active,
 button:focus,
 button:focus-visible,
-button:active,
-button:focus-within {
+button:active {
   outline: none !important;
   outline-color: transparent !important;
   outline-width: 0 !important;
   box-shadow: none !important;
   border: none !important;
   -webkit-tap-highlight-color: transparent !important;
-  background: linear-gradient(135deg, var(--blue) 0%, #1d4ed8 100%) !important;
 }
 
 .feed-header {
@@ -495,15 +492,6 @@ button:focus-within {
 
 .btn-play:active { transform: scale(0.98); }
 
-/* HILANGIN EFEK BIRU DI BTN PLAY */
-.btn-play:focus,
-.btn-play:focus-visible,
-.btn-play:active {
-  outline: none !important;
-  box-shadow: none !important;
-  background: linear-gradient(135deg, var(--blue), var(--cyan)) !important;
-}
-
 .reaction-row { 
   display: flex; 
   gap: 6px; 
@@ -535,14 +523,6 @@ button:focus-within {
   font-weight: 600;
 }
 
-/* HILANGIN EFEK BIRU DI REACTION */
-.reaction:focus,
-.reaction:focus-visible,
-.reaction:active {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
 .comments-section {
   margin-top: 10px;
   border-top: 1px solid var(--border);
@@ -566,11 +546,6 @@ button:focus-within {
 .comment-btn:hover {
   background: var(--surface);
   color: var(--blue);
-}
-
-.comment-btn:focus,
-.comment-btn:active {
-  outline: none !important;
 }
 
 .comment-list {
@@ -650,12 +625,6 @@ button:focus-within {
   font-size: 0.75rem;
 }
 
-.comment-submit:focus,
-.comment-submit:active {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
 .empty-feed {
   text-align: center;
   padding: 2rem 1rem;
@@ -720,13 +689,7 @@ button:focus-within {
 
 .nav-item.active i { color: var(--blue); }
 
-.nav-item:focus,
-.nav-item:active {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* TOAST MESSAGE */
+/* TOAST MESSAGE - GA KEPOTONG & BISA SCROLL */
 .toast-message {
   position: fixed;
   bottom: 80px;
@@ -811,10 +774,6 @@ button:focus-within {
   transform: translateY(0);
 }
 
-#searchSoundCloudBtn:focus {
-  outline: none !important;
-}
-
 /* HAPUS SEMUA OUTLINE BIRU DI SEMUA ELEMEN */
 *:focus,
 *:focus-visible,
@@ -833,6 +792,7 @@ button:focus, button:active,
 .reaction:focus, .reaction:active,
 .nav-item:focus, .nav-item:active,
 .btn-submit:focus, .btn-submit:active,
+.music-icon:focus, .music-icon:active,
 .toggle-anon:focus, .toggle-anon:active,
 .mood-chip:focus, .mood-chip:active,
 .comment-btn:focus, .comment-btn:active,
@@ -842,102 +802,6 @@ button:focus, button:active,
   outline-width: 0 !important;
   box-shadow: none !important;
   -webkit-tap-highlight-color: transparent !important;
-}
-
-/* Music Player */
-.music-icon {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, var(--blue), var(--cyan));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  transition: all 0.2s;
-  position: fixed;
-  bottom: 100px;
-  right: 16px;
-  z-index: 100;
-}
-
-.music-icon i {
-  font-size: 1.3rem;
-  color: white;
-}
-
-.music-icon:hover {
-  transform: scale(1.05);
-}
-
-.music-icon:focus {
-  outline: none !important;
-}
-
-.hidden {
-  display: none;
-}
-
-.music-player-card {
-  position: fixed;
-  bottom: 100px;
-  right: 16px;
-  width: 280px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: var(--shadow-md);
-  z-index: 99;
-  overflow: hidden;
-}
-
-.player-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-  background: var(--surface);
-  cursor: grab;
-  border-bottom: 1px solid var(--border);
-}
-
-.drag-icon {
-  cursor: grab;
-  color: var(--muted);
-}
-
-.close-player {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--muted);
-}
-
-.iframe-wrapper {
-  position: relative;
-  width: 100%;
-  height: 0;
-  padding-bottom: 56.25%;
-}
-
-.iframe-wrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.player-info {
-  padding: 8px 12px;
-  background: var(--surface);
-  font-size: 0.7rem;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 480px) {
@@ -964,16 +828,5 @@ button:focus, button:active,
     padding: 6px 14px;
     font-size: 0.7rem;
     bottom: 70px;
-  }
-  
-  .music-icon {
-    bottom: 80px;
-    right: 12px;
-    width: 42px;
-    height: 42px;
-  }
-  
-  .music-icon i {
-    font-size: 1rem;
   }
 }

@@ -1,53 +1,97 @@
-.container {
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Root Variables */
+:root {
+  --main-font: 'Arial', sans-serif;
+  --primary-color: #4CAF50;
+  --secondary-color: #FF5722;
+  --text-color: #333;
+}
+
+/* Hero Section */
+.hero {
+  background: url('hero-image.jpg') no-repeat center center/cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Badges */
+.badge {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+}
+
+/* Forms */
+form {
   display: flex;
   flex-direction: column;
 }
-
-.header {
-  background-color: #333;
-  color: white;
-  padding: 1rem;
+form input, form button {
+  margin: 0.5em 0;
 }
 
-.footer {
-  background-color: #333;
-  color: white;
-  padding: 1rem;
+/* Cards */
+.card {
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 1em;
 }
 
+/* Buttons */
 .button {
-  padding: 10px 15px;
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 0.5em 1em;
   border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-.button.focus,
-.button:focus {
-  outline: 2px dashed #f00;
+/* Feed */
+.feed-item {
+  border-bottom: 1px solid #ccc;
+  padding: 1em 0;
 }
 
-.text-input {
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-.text-input:focus {
-  outline: 2px solid #00f;
-}
-
-/* Layout styles */
-.header, .footer {
+/* Navigation */
+nav {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-color);
+  padding: 1em;
+}
+nav a {
+  color: white;
+  text-decoration: none;
 }
 
-/* Typography styles */
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
+/* Toast Messages */
+.toast {
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 1em;
+  border-radius: 5px;
 }
 
-h1, h2, h3 {
-  color: #333;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero {
+    height: 50vh;
+  }
+  nav {
+    flex-direction: column;
+  }
 }

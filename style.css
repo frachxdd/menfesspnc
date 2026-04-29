@@ -30,12 +30,11 @@ body {
   padding-bottom: 100px;
   background-color: #f8faff;
   background-image: 
-    linear-gradient(rgba(37, 99, 235, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37, 99, 235, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* Hero - tanpa glow shadow */
 .hero {
   text-align: center;
   padding: 2rem 1.5rem 1rem;
@@ -59,14 +58,13 @@ body {
   margin-bottom: 0.8rem;
 }
 
-/* Hilangkan text-shadow glow pada h1 */
 h1 {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(1.8rem, 7vw, 3rem);
   font-weight: 800;
   color: var(--blue);
   line-height: 1.2;
-  text-shadow: none;
+  text-shadow: 0 0 15px rgba(37, 99, 235, 0.45), 0 0 30px rgba(37, 99, 235, 0.2);
 }
 
 .tagline {
@@ -75,21 +73,20 @@ h1 {
   margin-top: 6px;
 }
 
-/* Running text - FULL WIDTH, no rounded, border like separator */
 .running-text {
-  background: var(--blue-mid);
+  background: linear-gradient(135deg, var(--blue-mid), var(--blue-light));
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   padding: 8px 0;
   margin-top: 16px;
+  border-radius: 40px;
   width: 100%;
-  border-radius: 0;
 }
 
 .running-text marquee {
   font-size: 0.75rem;
   color: var(--blue);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.3px;
 }
 
@@ -171,7 +168,7 @@ input[type="text"], textarea {
 input[type="text"]:focus, textarea:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
   background: #fff;
 }
 
@@ -281,16 +278,17 @@ textarea { min-height: 80px; }
   cursor: pointer;
   margin-top: 6px;
   transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.3);
 }
 
 .btn-submit:hover { 
-  box-shadow: 0 6px 20px rgba(37,99,235,0.3); 
+  box-shadow: 0 6px 24px rgba(37,99,235,0.4); 
   transform: translateY(-1px); 
 }
 
 .btn-submit:active { transform: scale(0.97); }
 
+/* Disabled button style */
 .btn-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -298,16 +296,20 @@ textarea { min-height: 80px; }
   box-shadow: none !important;
 }
 
-/* Hilangkan outline biru */
+/* HAPUS SEMUA EFEK BIRU DI TOMBOL */
 .btn-submit:focus,
 .btn-submit:focus-visible,
+.btn-submit:focus-within,
 .btn-submit:active,
 button:focus,
 button:focus-visible,
 button:active {
   outline: none !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
   box-shadow: none !important;
   border: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .feed-header {
@@ -349,7 +351,7 @@ button:active {
 
 .post-card:hover { 
   box-shadow: var(--shadow-md); 
-  transform: translateY(-2px); 
+  transform: translateY(-1px); 
 }
 
 .badge-type {
@@ -363,6 +365,7 @@ button:active {
   border: 1px solid #bfdbfe;
   padding: 3px 10px;
   border-radius: 99px;
+  letter-spacing: 0.3px;
 }
 
 .badge-song {
@@ -391,7 +394,7 @@ button:active {
 
 .message-text {
   font-size: 0.85rem;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--text);
   margin: 8px 0;
 }
@@ -501,6 +504,13 @@ button:active {
 .reaction:hover { 
   border-color: var(--blue-soft); 
   color: var(--blue); 
+}
+
+.reaction.reacted {
+  background: var(--blue-mid);
+  border-color: var(--blue);
+  color: var(--blue);
+  font-weight: 600;
 }
 
 .comments-section {
@@ -623,7 +633,6 @@ button:active {
   line-height: 1.5; 
 }
 
-/* Bottom Navigation */
 .bottom-nav {
   position: fixed;
   bottom: 15px;
@@ -640,7 +649,7 @@ button:active {
   align-items: center;
   padding: 5px 8px;
   z-index: 100;
-  box-shadow: 0 8px 32px rgba(37,99,235,0.08);
+  box-shadow: 0 8px 32px rgba(37,99,235,0.12), 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .nav-item {
@@ -670,7 +679,7 @@ button:active {
 
 .nav-item.active i { color: var(--blue); }
 
-/* Toast Message */
+/* TOAST MESSAGE - GA KEPOTONG & BISA SCROLL */
 .toast-message {
   position: fixed;
   bottom: 80px;
@@ -755,15 +764,19 @@ button:active {
   transform: translateY(0);
 }
 
-/* Hapus outline biru */
+/* HAPUS SEMUA OUTLINE BIRU DI SEMUA ELEMEN */
 *:focus,
 *:focus-visible,
 *:focus-within,
 *:active {
   outline: none !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
   box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
+/* Khusus untuk tombol biar aman */
 button:focus, button:active,
 .btn-play:focus, .btn-play:active,
 .reaction:focus, .reaction:active,
@@ -775,34 +788,10 @@ button:focus, button:active,
 .comment-btn:focus, .comment-btn:active,
 .comment-submit:focus, .comment-submit:active {
   outline: none !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
   box-shadow: none !important;
-}
-
-/* Music Player - tambahan */
-.music-icon {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, var(--blue), var(--cyan));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  transition: all 0.2s;
-}
-
-.music-icon i {
-  font-size: 1.3rem;
-  color: white;
-}
-
-.music-icon:hover {
-  transform: scale(1.05);
-}
-
-.hidden {
-  display: none;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 @media (max-width: 480px) {

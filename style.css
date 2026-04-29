@@ -83,43 +83,18 @@ h1 {
   margin-top: 6px;
 }
 
-/* RUNNING TEXT - TRANSPARAN + EFEK FADE PAKE PSEUDO ELEMENT */
+/* RUNNING TEXT - TRANSPARAN + EFEK FADE PAKE MASK */
 .running-text {
-  background: transparent !important;
+  background: transparent;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   padding: 10px 0;
   margin-top: 16px;
   width: 100%;
   border-radius: 0;
-  position: relative;
   overflow: hidden;
-}
-
-/* Efek fade di kiri */
-.running-text::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 60px;
-  height: 100%;
-  background: linear-gradient(to right, #f8faff, transparent);
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* Efek fade di kanan */
-.running-text::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 60px;
-  height: 100%;
-  background: linear-gradient(to left, #f8faff, transparent);
-  pointer-events: none;
-  z-index: 2;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
 .running-text marquee {
